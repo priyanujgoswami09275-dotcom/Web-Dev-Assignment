@@ -33,6 +33,11 @@ const cityInput = document.getElementById("cityInput");
 const loadingMessage = document.getElementById("loadingMessage");
 const errorMessage = document.getElementById("errorMessage");
 const themeButton = document.getElementById("themeButton");
+const unitButton = document.getElementById("unitButton");
+
+// Saved preferences and the last city (used when the unit changes).
+let currentUnit = localStorage.getItem("weatherUnit") || "celsius";
+let lastCity = "";
 const currentWeather = document.getElementById("currentWeather");
 const forecastSection = document.getElementById("forecastSection");
 const forecastCards = document.getElementById("forecastCards");
@@ -61,11 +66,15 @@ async function getWeather(cityName) {
   const { latitude, longitude, name, country } = geoData.results[0];
 
   // Second request: use those coordinates to ask for the weather.
+  // Fahrenheit is a URL option, so the units are fetched, not converted later.
+  const unitParameter =
+    currentUnit === "fahrenheit" ? "&temperature_unit=fahrenheit" : "";
+
   const weatherResponse = await fetch(
     `${WEATHER_URL}?latitude=${latitude}&longitude=${longitude}` +
       "&current=temperature_2m,wind_speed_10m,weather_code" +
       "&daily=weather_code,temperature_2m_max,temperature_2m_min" +
-      "&timezone=auto&forecast_days=5"
+      `&timezone=auto&forecast_days=5${unitParameter}`
   );
 
   if (!weatherResponse.ok) {
@@ -87,10 +96,11 @@ function showWeather(weather) {
     "Unknown weather",
     "🌡️",
   ];
+  const degreeLabel = currentUnit === "celsius" ? "°C" : "°F";
 
   currentWeather.innerHTML = `
     <div>
-      <p class="current-temperature">${Math.round(current.temperature_2m)}°C</p>
+      <p class="current-temperature">${Math.round(current.temperature_2m)}${degreeLabel}</p>
       <p class="current-place">${name}, ${country}</p>
     </div>
     <div class="current-details">
@@ -161,6 +171,7 @@ async function searchCity(cityName) {
 
   try {
     const weather = await getWeather(cityName);
+    lastCity = weather.name;
     showWeather(weather);
   } catch (error) {
     // A failed fetch (for example, no internet) arrives as a TypeError.
@@ -177,6 +188,23 @@ async function searchCity(cityName) {
   }
 }
 
+// updateUnitButton() - shows the unit that is currently active.
+function updateUnitButton() {
+  unitButton.textContent = currentUnit === "celsius" ? "°C" : "°F";
+}
+
+// changeUnit() - switches °C/°F, saves the choice, and reloads the last city.
+async function changeUnit() {
+  currentUnit = currentUnit === "celsius" ? "fahrenheit" : "celsius";
+  localStorage.setItem("weatherUnit", currentUnit);
+  updateUnitButton();
+
+  // Only reload if the visitor has already searched for a city.
+  if (lastCity) {
+    await searchCity(lastCity);
+  }
+}
+
 // Pressing the Search button or the Enter key submits the form.
 searchForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -185,5 +213,7 @@ searchForm.addEventListener("submit", (event) => {
 
 // Use the saved theme, or light mode on a first visit.
 setTheme(localStorage.getItem("weatherTheme") || "light");
+updateUnitButton();
 
 themeButton.addEventListener("click", toggleTheme);
+unitButton.addEventListener("click", changeUnit);
