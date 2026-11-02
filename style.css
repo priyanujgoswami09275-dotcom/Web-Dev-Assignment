@@ -57,13 +57,29 @@ body[data-weather="default"] {
 body[data-weather="sunny"] {
   --sky-top: #ffe29a;
   --sky-bottom: #8fc4ec;
-  --sky-ink: #233850;
+  /* This sky also shows a real photo. The scrim is a see-through dark
+     layer that keeps the header text readable on top of the photo. */
+  --sky-photo: url("assets/scenery-hills.jpg");
+  --sky-scrim: linear-gradient(
+    180deg,
+    rgba(8, 20, 36, 0.62) 0%,
+    rgba(8, 20, 36, 0.34) 38%,
+    rgba(8, 20, 36, 0.18) 100%
+  );
+  --sky-ink: #f4f8fc;
 }
 
 body[data-weather="cloudy"] {
   --sky-top: #b8c9da;
   --sky-bottom: #8fa6bd;
-  --sky-ink: #1f2d3a;
+  --sky-photo: url("assets/scenery-hills.jpg");
+  --sky-scrim: linear-gradient(
+    180deg,
+    rgba(8, 20, 36, 0.62) 0%,
+    rgba(8, 20, 36, 0.34) 38%,
+    rgba(8, 20, 36, 0.18) 100%
+  );
+  --sky-ink: #f4f8fc;
 }
 
 body[data-weather="rainy"] {
@@ -75,7 +91,14 @@ body[data-weather="rainy"] {
 body[data-weather="snow"] {
   --sky-top: #e4f2fb;
   --sky-bottom: #b9dcf0;
-  --sky-ink: #1f2d3a;
+  --sky-photo: url("assets/scenery-mountains.jpg");
+  --sky-scrim: linear-gradient(
+    180deg,
+    rgba(8, 20, 36, 0.62) 0%,
+    rgba(8, 20, 36, 0.34) 38%,
+    rgba(8, 20, 36, 0.18) 100%
+  );
+  --sky-ink: #f4f8fc;
 }
 
 body[data-weather="thunderstorm"] {
@@ -87,7 +110,14 @@ body[data-weather="thunderstorm"] {
 body[data-weather="night"] {
   --sky-top: #2f4470;
   --sky-bottom: #1b2a52;
-  --sky-ink: #e8edf7;
+  --sky-photo: url("assets/scenery-mountains.jpg");
+  --sky-scrim: linear-gradient(
+    180deg,
+    rgba(8, 20, 36, 0.62) 0%,
+    rgba(8, 20, 36, 0.34) 38%,
+    rgba(8, 20, 36, 0.18) 100%
+  );
+  --sky-ink: #f4f8fc;
 }
 
 /* The same skies again for dark mode: deeper and moodier. */
@@ -100,13 +130,25 @@ html[data-theme="dark"] body[data-weather="default"] {
 html[data-theme="dark"] body[data-weather="sunny"] {
   --sky-top: #2a5684;
   --sky-bottom: #163454;
-  --sky-ink: #fdf6df;
+  --sky-scrim: linear-gradient(
+    180deg,
+    rgba(4, 10, 20, 0.68) 0%,
+    rgba(4, 10, 20, 0.42) 38%,
+    rgba(4, 10, 20, 0.26) 100%
+  );
+  --sky-ink: #f4f8fc;
 }
 
 html[data-theme="dark"] body[data-weather="cloudy"] {
   --sky-top: #2c3947;
   --sky-bottom: #161f29;
-  --sky-ink: #dfe7ee;
+  --sky-scrim: linear-gradient(
+    180deg,
+    rgba(4, 10, 20, 0.68) 0%,
+    rgba(4, 10, 20, 0.42) 38%,
+    rgba(4, 10, 20, 0.26) 100%
+  );
+  --sky-ink: #f4f8fc;
 }
 
 html[data-theme="dark"] body[data-weather="rainy"] {
@@ -118,7 +160,13 @@ html[data-theme="dark"] body[data-weather="rainy"] {
 html[data-theme="dark"] body[data-weather="snow"] {
   --sky-top: #385364;
   --sky-bottom: #22333f;
-  --sky-ink: #eef6fb;
+  --sky-scrim: linear-gradient(
+    180deg,
+    rgba(4, 10, 20, 0.68) 0%,
+    rgba(4, 10, 20, 0.42) 38%,
+    rgba(4, 10, 20, 0.26) 100%
+  );
+  --sky-ink: #f4f8fc;
 }
 
 html[data-theme="dark"] body[data-weather="thunderstorm"] {
@@ -130,7 +178,13 @@ html[data-theme="dark"] body[data-weather="thunderstorm"] {
 html[data-theme="dark"] body[data-weather="night"] {
   --sky-top: #24365e;
   --sky-bottom: #101a38;
-  --sky-ink: #e2e9f6;
+  --sky-scrim: linear-gradient(
+    180deg,
+    rgba(4, 10, 20, 0.68) 0%,
+    rgba(4, 10, 20, 0.42) 38%,
+    rgba(4, 10, 20, 0.26) 100%
+  );
+  --sky-ink: #f4f8fc;
 }
 
 /* ============================================================
@@ -148,9 +202,15 @@ html[data-theme="dark"] body[data-weather="night"] {
 
 body {
   margin: 0;
-  /* The gradient covers the whole page, so cards stay on the sky even
-     after scrolling, and dark mode keeps the same feeling. */
-  background: linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
+  /* The background is two layers: a scrim on top of an optional photo.
+     Gradient skies leave --sky-photo as "none", so only the scrim shows
+     for them (the scrim is then just their normal gradient). */
+  --sky-scrim: linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
+  --sky-photo: none;
+  background-color: var(--sky-bottom);
+  background-image: var(--sky-scrim), var(--sky-photo);
+  background-size: auto, cover;
+  background-position: center, center top;
   background-repeat: no-repeat;
   color: var(--ink);
   /* One font for the whole page, loaded in index.html. */
@@ -573,4 +633,31 @@ button:focus-visible {
 ::selection {
   background-color: var(--accent);
   color: var(--accent-ink);
+}
+
+/* ============================================================
+   Photo credit footer
+   ============================================================ */
+
+/* The credit sits in a small dark pill so it stays readable on any
+   sky, photo or gradient, in both themes. */
+.photo-credit {
+  max-width: 980px;
+  margin: 28px auto 26px;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.photo-credit p {
+  display: inline-block;
+  margin: 0;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background-color: rgba(8, 20, 36, 0.55);
+  color: #f4f8fc;
+  font-size: 0.8rem;
+}
+
+.photo-credit a {
+  color: inherit;
 }

@@ -28,6 +28,10 @@ build tools, and no API key are needed.
   or a deep-blue default). Cards are frosted glass with rounded corners. The
   page uses the Poppins font, a CSS loading spinner, and a welcome card that
   says "Search a city to see the weather" before the first search.
+- Scenic photo backgrounds: sunny and cloudy weather lay a green-hills photo
+  over the sky, and snow and night lay a snowy-mountain photo. A dark scrim
+  sits between the photo and the page so the header stays readable, and if a
+  photo file is missing the sky quietly falls back to its plain gradient.
 
 ## APIs used
 
@@ -93,17 +97,24 @@ The project has exactly three files.
 
 `getWeatherType()` turns the API's weather code into one of these names, and
 `showWeather()` stores it as `data-weather` on `<body>` so CSS can pick the
-matching gradient.
+matching sky. Four skies also show a scenic photo under a dark scrim (a
+see-through gradient layer); the others keep their plain gradient.
 
-| `data-weather` | Weather codes | Sky |
-| --- | --- | --- |
-| `sunny` | 0, 1 (daytime) | warm yellow-blue |
-| `cloudy` | 2, 3, 45, 48 | grey-blue |
-| `rainy` | 51-65, 80-82 | dark blue |
-| `snow` | 71-77 | ice blue |
-| `thunderstorm` | 95, 96 | dark purple |
-| `night` | any code with `is_day` = 0 | deep blue |
-| `default` | before the first search | deep blue |
+| `data-weather` | Weather codes | Sky | Photo |
+| --- | --- | --- | --- |
+| `sunny` | 0, 1 (daytime) | warm yellow-blue | green hills |
+| `cloudy` | 2, 3, 45, 48 | grey-blue | green hills |
+| `rainy` | 51-65, 80-82 | dark blue | — |
+| `snow` | 71-77 | ice blue | snowy mountains |
+| `thunderstorm` | 95, 96 | dark purple | — |
+| `night` | any code with `is_day` = 0 | deep blue | snowy mountains |
+| `default` | before the first search | deep blue | — |
+
+In `style.css` each sky rule sets two layers for `background-image`: the scrim
+first and `--sky-photo` second. A scrim is a see-through dark layer that keeps
+the header text readable on top of a photo. Skies without a photo leave
+`--sky-photo` as `none`, so only their gradient shows — and if a photo file is
+missing, the browser just skips that layer, which is the fallback.
 
 ### Saved values
 
@@ -112,3 +123,11 @@ matching gradient.
 | `weatherTheme` | `"light"` or `"dark"` |
 | `weatherUnit` | `"celsius"` or `"fahrenheit"` |
 | `recentCities` | A JSON array of the last five city names |
+
+## Credits
+
+- Weather data from [Open-Meteo](https://open-meteo.com/).
+- Scenic photos from [Pexels](https://www.pexels.com/), free to use under the
+  Pexels license: snowy mountains by
+  [Eberhard Grossgasteiger](https://www.pexels.com/@eberhardgross) and green
+  hills by [chiecharon](https://www.pexels.com/@chiecharon).

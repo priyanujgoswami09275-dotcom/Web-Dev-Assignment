@@ -2,3 +2,8 @@
 PRODUCT.md
 DESIGN.md
 .impeccable/
+
+# Full-size source photos. Only the resized copies inside assets/ are committed.
+pexels-eberhardgross-20459771.jpg
+pexels-chiecharon-672451.jpg
+.DS_Store
