@@ -2,11 +2,37 @@
 const GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search";
 const WEATHER_URL = "https://api.open-meteo.com/v1/forecast";
 
+// Weather codes returned by Open-Meteo, mapped to a short text and an emoji.
+const weatherDescriptions = {
+  0: ["Clear sky", "☀️"],
+  1: ["Mainly clear", "🌤️"],
+  2: ["Partly cloudy", "⛅"],
+  3: ["Overcast", "☁️"],
+  45: ["Fog", "🌫️"],
+  48: ["Freezing fog", "🌫️"],
+  51: ["Light drizzle", "🌦️"],
+  53: ["Drizzle", "🌦️"],
+  55: ["Heavy drizzle", "🌦️"],
+  61: ["Light rain", "🌧️"],
+  63: ["Rain", "🌧️"],
+  65: ["Heavy rain", "🌧️"],
+  71: ["Light snow", "❄️"],
+  73: ["Snow", "❄️"],
+  75: ["Heavy snow", "❄️"],
+  77: ["Snow grains", "❄️"],
+  80: ["Light showers", "🌦️"],
+  81: ["Showers", "🌦️"],
+  82: ["Heavy showers", "🌧️"],
+  95: ["Thunderstorm", "⛈️"],
+  96: ["Thunderstorm with hail", "⛈️"],
+};
+
 // Page elements the script needs to read or update.
 const searchForm = document.getElementById("searchForm");
 const cityInput = document.getElementById("cityInput");
 const loadingMessage = document.getElementById("loadingMessage");
 const errorMessage = document.getElementById("errorMessage");
+const currentWeather = document.getElementById("currentWeather");
 
 // getWeather(cityName) - finds the city's coordinates, then fetches its forecast.
 async function getWeather(cityName) {
@@ -30,7 +56,34 @@ async function getWeather(cityName) {
   return { name, country, weatherData };
 }
 
-// searchCity(cityName) - the small controller: shows loading, loads one city.
+// showWeather(weather) - builds the current weather card on the page.
+function showWeather(weather) {
+  const { name, country, weatherData } = weather;
+  const { current } = weatherData;
+
+  // Falls back to a safe pair if the API sends an unknown code.
+  const [description, emoji] = weatherDescriptions[current.weather_code] || [
+    "Unknown weather",
+    "🌡️",
+  ];
+
+  currentWeather.innerHTML = `
+    <div>
+      <p class="current-temperature">${Math.round(current.temperature_2m)}°C</p>
+      <p class="current-place">${name}, ${country}</p>
+    </div>
+    <div class="current-details">
+      <p class="current-description">
+        <span class="current-emoji">${emoji}</span>${description}
+      </p>
+      <p class="current-wind">Wind: ${Math.round(current.wind_speed_10m)} km/h</p>
+    </div>
+  `;
+
+  currentWeather.hidden = false;
+}
+
+// searchCity(cityName) - the small controller: shows loading, loads and displays one city.
 async function searchCity(cityName) {
   loadingMessage.hidden = false;
   errorMessage.hidden = true;
@@ -38,7 +91,7 @@ async function searchCity(cityName) {
   const weather = await getWeather(cityName);
 
   loadingMessage.hidden = true;
-  return weather;
+  showWeather(weather);
 }
 
 // Pressing the Search button or the Enter key submits the form.
