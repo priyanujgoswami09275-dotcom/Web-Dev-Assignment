@@ -124,6 +124,11 @@ const currentWeather = document.getElementById("currentWeather");
 const forecastSection = document.getElementById("forecastSection");
 const forecastCards = document.getElementById("forecastCards");
 const welcomeCard = document.getElementById("welcomeCard");
+const sceneryImage = document.getElementById("sceneryImage");
+const sceneryCount = document.getElementById("sceneryCount");
+const sceneryPrev = document.getElementById("sceneryPrev");
+const sceneryNext = document.getElementById("sceneryNext");
+const sceneryToggle = document.getElementById("sceneryToggle");
 
 // fetchForecast(latitude, longitude) - asks the weather API for one coordinate.
 async function fetchForecast(latitude, longitude) {
@@ -541,3 +546,82 @@ recentSearches.addEventListener("click", (event) => {
     searchCity(city);
   }
 });
+
+/* ============================================================
+   Featured scenery banner
+   ============================================================ */
+
+// sceneryPhotos - the two local landscape photos the banner cycles through.
+const sceneryPhotos = [
+  {
+    src: "assets/scenery-hills.jpg",
+    alt: "Green hills with a volcano in the distance",
+  },
+  {
+    src: "assets/scenery-mountains.jpg",
+    alt: "Snowy mountains beside a frozen river at sunset",
+  },
+];
+
+// sceneryIndex is which photo is showing, and sceneryTimer holds the
+// automatic change timer (it is null whenever the banner is paused).
+let sceneryIndex = 0;
+let sceneryTimer = null;
+
+// showScenery(index) - shows one photo in the banner and updates the
+// caption. Adding the list length before the modulo makes the count wrap
+// around at both ends (so -1 becomes the last photo, not an error).
+function showScenery(index) {
+  sceneryIndex = (index + sceneryPhotos.length) % sceneryPhotos.length;
+  const photo = sceneryPhotos[sceneryIndex];
+  sceneryImage.src = photo.src;
+  sceneryImage.alt = photo.alt;
+  sceneryCount.textContent = `${sceneryIndex + 1} of ${sceneryPhotos.length}`;
+}
+
+// startSceneryTimer() - changes the photo every 8 seconds automatically.
+function startSceneryTimer() {
+  stopSceneryTimer();
+  sceneryTimer = setInterval(() => {
+    showScenery(sceneryIndex + 1);
+  }, 8000);
+}
+
+// stopSceneryTimer() - stops the automatic photo changes.
+function stopSceneryTimer() {
+  clearInterval(sceneryTimer);
+  sceneryTimer = null;
+}
+
+// toggleSceneryTimer() - pauses or resumes the automatic changes and
+// swaps the button text between Pause and Play.
+function toggleSceneryTimer() {
+  if (sceneryTimer === null) {
+    startSceneryTimer();
+    sceneryToggle.textContent = "Pause";
+    sceneryToggle.setAttribute("aria-label", "Pause photo rotation");
+  } else {
+    stopSceneryTimer();
+    sceneryToggle.textContent = "Play";
+    sceneryToggle.setAttribute("aria-label", "Resume photo rotation");
+  }
+}
+
+// The banner starts on the first photo, changing by itself. If the visitor
+// has asked their system for reduced motion, it starts paused instead.
+showScenery(0);
+if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  sceneryToggle.textContent = "Play";
+  sceneryToggle.setAttribute("aria-label", "Resume photo rotation");
+} else {
+  startSceneryTimer();
+}
+
+// The three banner buttons: previous photo, next photo, and pause/play.
+sceneryPrev.addEventListener("click", () => {
+  showScenery(sceneryIndex - 1);
+});
+sceneryNext.addEventListener("click", () => {
+  showScenery(sceneryIndex + 1);
+});
+sceneryToggle.addEventListener("click", toggleSceneryTimer);

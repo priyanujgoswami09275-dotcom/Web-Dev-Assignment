@@ -32,6 +32,10 @@ build tools, and no API key are needed.
   over the sky, and snow and night lay a snowy-mountain photo. A dark scrim
   sits between the photo and the page so the header stays readable, and if a
   photo file is missing the sky quietly falls back to its plain gradient.
+- Featured scenery banner: a photo card below the forecast that changes
+  between the two scenic photos every 8 seconds. The arrows change the photo
+  by hand, the Pause button stops the automatic changes, and the counter
+  shows which photo is showing ("1 of 2").
 
 ## APIs used
 
@@ -63,7 +67,8 @@ The project has exactly three files.
 
 - `index.html` holds the page structure: the masthead, the search form with its
   suggestion dropdown, the loading and error messages, an empty current-weather
-  section, and an empty forecast grid.
+  section, an empty forecast grid, the scenery banner, and a small photo
+  credit footer.
 - `style.css` holds all the colours in CSS variables. The `data-theme`
   attribute on the `<html>` element switches between the light and dark values.
   The `data-weather` attribute on `<body>` (set by `script.js`) picks one of
@@ -92,6 +97,10 @@ The project has exactly three files.
    API is called.
 6. Theme, unit, and recent-city choices are saved in `localStorage`, so they are
    still there after a refresh.
+7. The scenery banner uses `showScenery`, `startSceneryTimer`,
+   `stopSceneryTimer`, and `toggleSceneryTimer`. A `setInterval` changes the
+   photo every 8 seconds, the arrows call `showScenery` by hand, and the
+   Pause button stops and restarts the timer.
 
 ### Weather backgrounds
 
@@ -115,6 +124,18 @@ first and `--sky-photo` second. A scrim is a see-through dark layer that keeps
 the header text readable on top of a photo. Skies without a photo leave
 `--sky-photo` as `none`, so only their gradient shows — and if a photo file is
 missing, the browser just skips that layer, which is the fallback.
+
+### Featured scenery banner
+
+The banner below the forecast cycles through the two photos in the
+`sceneryPhotos` list. `showScenery(index)` shows one photo: the line
+`(index + sceneryPhotos.length) % sceneryPhotos.length` makes the count wrap
+around, so "next" on the last photo goes back to the first and "previous" on
+the first photo goes to the last. `startSceneryTimer()` calls `setInterval`
+with 8000 milliseconds, so the photo changes by itself every 8 seconds;
+`toggleSceneryTimer()` clears that timer (Pause) or starts it again (Play)
+and flips the button label to match. If the visitor's system asks for
+reduced motion, the banner starts paused so nothing moves on its own.
 
 ### Saved values
 

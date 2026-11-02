@@ -77,6 +77,27 @@
       <h2>Five-day forecast</h2>
       <div id="forecastCards" class="forecast-grid"></div>
     </section>
+
+    <!-- The featured scenery banner cycles through the two local photos.
+         script.js changes the image and the counter, and the Pause button
+         stops and restarts the automatic changes. -->
+    <section class="scenery-banner" aria-label="Featured scenery">
+      <img
+        id="sceneryImage"
+        class="scenery-image"
+        src="assets/scenery-hills.jpg"
+        alt="Green hills with a volcano in the distance"
+      >
+      <div class="scenery-info">
+        <p class="scenery-title">Featured landscape</p>
+        <p class="scenery-count" id="sceneryCount">1 of 2</p>
+      </div>
+      <div class="scenery-controls">
+        <button id="sceneryPrev" class="scenery-button" type="button" aria-label="Previous photo">‹</button>
+        <button id="sceneryNext" class="scenery-button" type="button" aria-label="Next photo">›</button>
+        <button id="sceneryToggle" class="scenery-button" type="button" aria-label="Pause photo rotation">Pause</button>
+      </div>
+    </section>
   </main>
 
   <!-- Small credit for the scenic photos. Pexels photos are free to use. -->
