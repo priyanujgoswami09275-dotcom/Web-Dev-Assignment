@@ -32,6 +32,7 @@ const searchForm = document.getElementById("searchForm");
 const cityInput = document.getElementById("cityInput");
 const loadingMessage = document.getElementById("loadingMessage");
 const errorMessage = document.getElementById("errorMessage");
+const themeButton = document.getElementById("themeButton");
 const currentWeather = document.getElementById("currentWeather");
 const forecastSection = document.getElementById("forecastSection");
 const forecastCards = document.getElementById("forecastCards");
@@ -134,6 +135,19 @@ function showError(message) {
   forecastSection.hidden = true;
 }
 
+// setTheme(theme) - applies a theme to the page and remembers it.
+function setTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  themeButton.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+  localStorage.setItem("weatherTheme", theme);
+}
+
+// toggleTheme() - switches the page between light and dark mode.
+function toggleTheme() {
+  const currentTheme = document.documentElement.dataset.theme;
+  setTheme(currentTheme === "dark" ? "light" : "dark");
+}
+
 // searchCity(cityName) - the small controller: checks the input, loads and displays one city.
 async function searchCity(cityName) {
   // An empty search gets a helpful message instead of a network request.
@@ -168,3 +182,8 @@ searchForm.addEventListener("submit", (event) => {
   event.preventDefault();
   searchCity(cityInput.value.trim());
 });
+
+// Use the saved theme, or light mode on a first visit.
+setTheme(localStorage.getItem("weatherTheme") || "light");
+
+themeButton.addEventListener("click", toggleTheme);
