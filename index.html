@@ -27,16 +27,21 @@
   <main>
     <!-- Search form: submitting it (button or Enter) starts a search. -->
     <section class="search-section">
-      <form id="searchForm" class="search-form">
-        <label for="cityInput" class="visually-hidden">City name</label>
-        <input
-          id="cityInput"
-          type="text"
-          placeholder="Enter a city, e.g. London"
-          autocomplete="off"
-        >
-        <button id="searchButton" type="submit">Search</button>
-      </form>
+      <div class="search-box">
+        <form id="searchForm" class="search-form">
+          <label for="cityInput" class="visually-hidden">City name</label>
+          <input
+            id="cityInput"
+            type="text"
+            placeholder="Enter a city, e.g. London"
+            autocomplete="off"
+          >
+          <button id="searchButton" type="submit">Search</button>
+        </form>
+
+        <!-- Autocomplete suggestions appear inside this dropdown. -->
+        <div id="suggestionBox" class="suggestion-box" hidden></div>
+      </div>
 
       <!-- Recent cities are added here as small clickable chips. -->
       <div id="recentSearches" class="recent-searches"></div>

@@ -27,6 +27,71 @@ const weatherDescriptions = {
   96: ["Thunderstorm with hail", "⛈️"],
 };
 
+// Built-in list of well-known cities, used for one-letter suggestions.
+// Every entry has the same shape: {name, region, country, latitude, longitude}.
+// Coordinates are close enough for weather searches, not survey-grade.
+const popularCities = [
+  { name: "Agra", region: "Uttar Pradesh", country: "India", latitude: 27.18, longitude: 78.01 },
+  { name: "Ahmedabad", region: "Gujarat", country: "India", latitude: 23.03, longitude: 72.58 },
+  { name: "Amsterdam", region: "North Holland", country: "Netherlands", latitude: 52.37, longitude: 4.9 },
+  { name: "Athens", region: "Attica", country: "Greece", latitude: 37.98, longitude: 23.73 },
+  { name: "Barcelona", region: "Catalonia", country: "Spain", latitude: 41.39, longitude: 2.17 },
+  { name: "Bengaluru", region: "Karnataka", country: "India", latitude: 12.97, longitude: 77.59 },
+  { name: "Berlin", region: "Berlin", country: "Germany", latitude: 52.52, longitude: 13.4 },
+  { name: "Bhopal", region: "Madhya Pradesh", country: "India", latitude: 23.26, longitude: 77.41 },
+  { name: "Chandigarh", region: "Chandigarh", country: "India", latitude: 30.73, longitude: 76.78 },
+  { name: "Chennai", region: "Tamil Nadu", country: "India", latitude: 13.08, longitude: 80.27 },
+  { name: "Coimbatore", region: "Tamil Nadu", country: "India", latitude: 11.02, longitude: 76.96 },
+  { name: "Darjeeling", region: "West Bengal", country: "India", latitude: 27.04, longitude: 88.26 },
+  { name: "Delhi", region: "Delhi", country: "India", latitude: 28.61, longitude: 77.21 },
+  { name: "Dubai", region: "Dubai", country: "United Arab Emirates", latitude: 25.2, longitude: 55.27 },
+  { name: "Edinburgh", region: "Scotland", country: "United Kingdom", latitude: 55.95, longitude: -3.19 },
+  { name: "Florence", region: "Tuscany", country: "Italy", latitude: 43.77, longitude: 11.26 },
+  { name: "Geneva", region: "Geneva", country: "Switzerland", latitude: 46.2, longitude: 6.14 },
+  { name: "Goa", region: "Goa", country: "India", latitude: 15.3, longitude: 74.12 },
+  { name: "Hampi", region: "Karnataka", country: "India", latitude: 15.34, longitude: 76.46 },
+  { name: "Hyderabad", region: "Telangana", country: "India", latitude: 17.39, longitude: 78.49 },
+  { name: "Indore", region: "Madhya Pradesh", country: "India", latitude: 22.72, longitude: 75.86 },
+  { name: "Istanbul", region: "Istanbul", country: "Türkiye", latitude: 41.01, longitude: 28.98 },
+  { name: "Jaipur", region: "Rajasthan", country: "India", latitude: 26.91, longitude: 75.79 },
+  { name: "Jakarta", region: "Jakarta", country: "Indonesia", latitude: -6.21, longitude: 106.85 },
+  { name: "Kathmandu", region: "Bagmati", country: "Nepal", latitude: 27.72, longitude: 85.32 },
+  { name: "Kochi", region: "Kerala", country: "India", latitude: 9.93, longitude: 76.27 },
+  { name: "Kolkata", region: "West Bengal", country: "India", latitude: 22.57, longitude: 88.36 },
+  { name: "London", region: "England", country: "United Kingdom", latitude: 51.51, longitude: -0.13 },
+  { name: "Lucknow", region: "Uttar Pradesh", country: "India", latitude: 26.85, longitude: 80.95 },
+  { name: "Manali", region: "Himachal Pradesh", country: "India", latitude: 32.24, longitude: 77.19 },
+  { name: "Melbourne", region: "Victoria", country: "Australia", latitude: -37.81, longitude: 144.96 },
+  { name: "Moscow", region: "Moscow", country: "Russia", latitude: 55.76, longitude: 37.62 },
+  { name: "Mumbai", region: "Maharashtra", country: "India", latitude: 19.08, longitude: 72.88 },
+  { name: "Munnar", region: "Kerala", country: "India", latitude: 10.09, longitude: 77.06 },
+  { name: "Mysore", region: "Karnataka", country: "India", latitude: 12.3, longitude: 76.64 },
+  { name: "Nagpur", region: "Maharashtra", country: "India", latitude: 21.15, longitude: 79.09 },
+  { name: "Nainital", region: "Uttarakhand", country: "India", latitude: 29.38, longitude: 79.46 },
+  { name: "Nashik", region: "Maharashtra", country: "India", latitude: 19.99, longitude: 73.79 },
+  { name: "New York", region: "New York", country: "United States", latitude: 40.71, longitude: -74.01 },
+  { name: "Osaka", region: "Ōsaka", country: "Japan", latitude: 34.69, longitude: 135.5 },
+  { name: "Oslo", region: "Oslo", country: "Norway", latitude: 59.91, longitude: 10.75 },
+  { name: "Paris", region: "Île-de-France", country: "France", latitude: 48.86, longitude: 2.35 },
+  { name: "Patna", region: "Bihar", country: "India", latitude: 25.59, longitude: 85.14 },
+  { name: "Pune", region: "Maharashtra", country: "India", latitude: 18.52, longitude: 73.86 },
+  { name: "Quezon City", region: "Metro Manila", country: "Philippines", latitude: 14.64, longitude: 121.03 },
+  { name: "Ranchi", region: "Jharkhand", country: "India", latitude: 23.34, longitude: 85.31 },
+  { name: "Rome", region: "Lazio", country: "Italy", latitude: 41.9, longitude: 12.5 },
+  { name: "Shimla", region: "Himachal Pradesh", country: "India", latitude: 31.1, longitude: 77.17 },
+  { name: "Surat", region: "Gujarat", country: "India", latitude: 21.17, longitude: 72.83 },
+  { name: "Sydney", region: "New South Wales", country: "Australia", latitude: -33.87, longitude: 151.21 },
+  { name: "Tokyo", region: "Tokyo", country: "Japan", latitude: 35.68, longitude: 139.69 },
+  { name: "Toronto", region: "Ontario", country: "Canada", latitude: 43.65, longitude: -79.38 },
+  { name: "Udaipur", region: "Rajasthan", country: "India", latitude: 24.58, longitude: 73.71 },
+  { name: "Vadodara", region: "Gujarat", country: "India", latitude: 22.31, longitude: 73.18 },
+  { name: "Venice", region: "Veneto", country: "Italy", latitude: 45.44, longitude: 12.34 },
+  { name: "Warsaw", region: "Masovia", country: "Poland", latitude: 52.23, longitude: 21.01 },
+  { name: "Xi'an", region: "Shaanxi", country: "China", latitude: 34.34, longitude: 108.94 },
+  { name: "Yokohama", region: "Kanagawa", country: "Japan", latitude: 35.44, longitude: 139.64 },
+  { name: "Zurich", region: "Zurich", country: "Switzerland", latitude: 47.38, longitude: 8.54 },
+];
+
 // Page elements the script needs to read or update.
 const searchForm = document.getElementById("searchForm");
 const cityInput = document.getElementById("cityInput");
@@ -35,38 +100,23 @@ const errorMessage = document.getElementById("errorMessage");
 const themeButton = document.getElementById("themeButton");
 const unitButton = document.getElementById("unitButton");
 const recentSearches = document.getElementById("recentSearches");
+const suggestionBox = document.getElementById("suggestionBox");
 
 // Saved preferences and the last city (used when the unit changes).
 let currentUnit = localStorage.getItem("weatherUnit") || "celsius";
 let lastCity = "";
+
+// Shared state for the autocomplete dropdown.
+// currentSuggestions is what the dropdown is showing right now.
+// suggestionTimer remembers the pending debounce timer so it can be cancelled.
+let currentSuggestions = [];
+let suggestionTimer = null;
 const currentWeather = document.getElementById("currentWeather");
 const forecastSection = document.getElementById("forecastSection");
 const forecastCards = document.getElementById("forecastCards");
 
-// getWeather(cityName) - finds the city's coordinates, then fetches its forecast.
-async function getWeather(cityName) {
-  // First request: turn the city name into a latitude and longitude.
-  const geoResponse = await fetch(
-    `${GEOCODING_URL}?name=${encodeURIComponent(cityName)}&count=1`
-  );
-
-  // response.ok is false when the server answers with an error status.
-  if (!geoResponse.ok) {
-    throw new Error("The location service is not responding. Please try again.");
-  }
-
-  const geoData = await geoResponse.json();
-
-  // An empty results list means the city name could not be found.
-  if (!geoData.results || geoData.results.length === 0) {
-    throw new Error(
-      `No city found for "${cityName}". Please check the spelling and try again.`
-    );
-  }
-
-  const { latitude, longitude, name, country } = geoData.results[0];
-
-  // Second request: use those coordinates to ask for the weather.
+// fetchForecast(latitude, longitude) - asks the weather API for one coordinate.
+async function fetchForecast(latitude, longitude) {
   // Fahrenheit is a URL option, so the units are fetched, not converted later.
   const unitParameter =
     currentUnit === "fahrenheit" ? "&temperature_unit=fahrenheit" : "";
@@ -89,6 +139,44 @@ async function getWeather(cityName) {
   }
 
   const weatherData = await weatherResponse.json();
+  return weatherData;
+}
+
+// getWeather(cityName, location) - gets the weather for one city.
+// location is optional: when it comes from a suggestion we already have its
+// coordinates, so the extra geocoding step can be skipped.
+async function getWeather(cityName, location) {
+  if (location) {
+    const weatherData = await fetchForecast(
+      location.latitude,
+      location.longitude
+    );
+    return { name: location.name, country: location.country, weatherData };
+  }
+
+  // First request: turn the city name into a latitude and longitude.
+  const geoResponse = await fetch(
+    `${GEOCODING_URL}?name=${encodeURIComponent(cityName)}&count=1`
+  );
+
+  // response.ok is false when the server answers with an error status.
+  if (!geoResponse.ok) {
+    throw new Error("The location service is not responding. Please try again.");
+  }
+
+  const geoData = await geoResponse.json();
+
+  // An empty results list means the city name could not be found.
+  if (!geoData.results || geoData.results.length === 0) {
+    throw new Error(
+      `No city found for "${cityName}". Please check the spelling and try again.`
+    );
+  }
+
+  const { latitude, longitude, name, country } = geoData.results[0];
+
+  // Second request: use those coordinates to ask for the weather.
+  const weatherData = await fetchForecast(latitude, longitude);
 
   return { name, country, weatherData };
 }
@@ -165,8 +253,9 @@ function toggleTheme() {
   setTheme(currentTheme === "dark" ? "light" : "dark");
 }
 
-// searchCity(cityName) - the small controller: checks the input, loads and displays one city.
-async function searchCity(cityName) {
+// searchCity(cityName, location) - checks the input, loads and displays one city.
+// location is optional and comes from a chosen suggestion (see getWeather).
+async function searchCity(cityName, location) {
   // An empty search gets a helpful message instead of a network request.
   if (!cityName) {
     showError("Please enter a city name.");
@@ -177,7 +266,7 @@ async function searchCity(cityName) {
   errorMessage.hidden = true;
 
   try {
-    const weather = await getWeather(cityName);
+    const weather = await getWeather(cityName, location);
     lastCity = weather.name;
     showWeather(weather);
     saveRecentCity(weather.name);
@@ -248,9 +337,145 @@ async function changeUnit() {
   }
 }
 
+// getSuggestions(query) - makes the list of suggestions for what was typed.
+// One letter: filter the built-in popularCities list by first letter.
+// Two or more letters: ask the geocoding API for up to 6 real matches.
+// If the API fails we return an empty list so the page never breaks.
+async function getSuggestions(query) {
+  // A single letter filters the offline list: only cities starting with it.
+  if (query.length === 1) {
+    const firstLetter = query.toUpperCase();
+    return popularCities.filter(
+      (city) => city.name[0].toUpperCase() === firstLetter
+    );
+  }
+
+  // Two or more letters ask the live geocoding service.
+  try {
+    const response = await fetch(
+      `${GEOCODING_URL}?name=${encodeURIComponent(query)}&count=6`
+    );
+
+    // A server problem (for example a busy service) means no suggestions.
+    if (!response.ok) {
+      return [];
+    }
+
+    const data = await response.json();
+
+    // An empty results list also means no suggestions.
+    if (!data.results || data.results.length === 0) {
+      return [];
+    }
+
+    // Reshape each API result into the same shape as the popularCities
+    // entries, so the rest of the code treats every suggestion the same.
+    return data.results.map((result) => ({
+      name: result.name,
+      region: result.admin1 || "",
+      country: result.country || "",
+      latitude: result.latitude,
+      longitude: result.longitude,
+    }));
+  } catch (error) {
+    // No internet or a broken reply just means no suggestions.
+    return [];
+  }
+}
+
+// showSuggestions(suggestions) - paints the dropdown with one row per city.
+function showSuggestions(suggestions) {
+  currentSuggestions = suggestions;
+
+  // Nothing to suggest: the dropdown simply closes.
+  if (suggestions.length === 0) {
+    hideSuggestions();
+    return;
+  }
+
+  suggestionBox.innerHTML = suggestions
+    .map((suggestion, index) => {
+      // Some API results have no state, so empty parts are skipped and
+      // the label stays clean, like "London, England, United Kingdom".
+      const label = [
+        suggestion.name,
+        suggestion.region,
+        suggestion.country,
+      ]
+        .filter(Boolean)
+        .join(", ");
+
+      return `
+        <button class="suggestion" type="button" data-index="${index}">
+          <span class="suggestion-pin">📍</span>${label}
+        </button>
+      `;
+    })
+    .join("");
+
+  suggestionBox.hidden = false;
+}
+
+// hideSuggestions() - empties and hides the dropdown.
+function hideSuggestions() {
+  currentSuggestions = [];
+  suggestionBox.innerHTML = "";
+  suggestionBox.hidden = true;
+}
+
+// Typing a letter starts a 300ms debounce timer. We throw away any older
+// timer (clearTimeout) before setting the new one, so only the pause after
+// the LAST key press sends a request. That keeps the API calls to one per
+// word instead of one per letter, which is faster and less wasteful.
+cityInput.addEventListener("input", () => {
+  const query = cityInput.value.trim();
+
+  clearTimeout(suggestionTimer);
+
+  // An empty box always closes the dropdown.
+  if (query === "") {
+    hideSuggestions();
+    return;
+  }
+
+  suggestionTimer = setTimeout(async () => {
+    // The visitor may have changed the text while we waited, so only show
+    // suggestions that still match what is in the box right now.
+    if (cityInput.value.trim() !== query) {
+      return;
+    }
+    const suggestions = await getSuggestions(query);
+    showSuggestions(suggestions);
+  }, 300);
+});
+
+// Clicking a suggestion loads that city straight from its coordinates.
+suggestionBox.addEventListener("click", (event) => {
+  const button = event.target.closest("button.suggestion");
+  if (!button) {
+    return;
+  }
+
+  const suggestion = currentSuggestions[button.dataset.index];
+  hideSuggestions();
+
+  // The suggestion already knows its latitude and longitude, so the
+  // normal geocoding step is skipped by passing it to searchCity.
+  cityInput.value = suggestion.name;
+  searchCity(suggestion.name, suggestion);
+});
+
+// Clicking anywhere outside the search area closes the dropdown.
+document.addEventListener("click", (event) => {
+  if (!event.target.closest(".search-box")) {
+    hideSuggestions();
+  }
+});
+
 // Pressing the Search button or the Enter key submits the form.
 searchForm.addEventListener("submit", (event) => {
   event.preventDefault();
+  hideSuggestions();
   searchCity(cityInput.value.trim());
 });
 
