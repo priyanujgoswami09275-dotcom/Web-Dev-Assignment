@@ -13,9 +13,13 @@ const weatherDescriptions = {
   51: ["Light drizzle", "🌦️"],
   53: ["Drizzle", "🌦️"],
   55: ["Heavy drizzle", "🌦️"],
+  56: ["Light freezing drizzle", "🌧️"],
+  57: ["Freezing drizzle", "🌧️"],
   61: ["Light rain", "🌧️"],
   63: ["Rain", "🌧️"],
   65: ["Heavy rain", "🌧️"],
+  66: ["Light freezing rain", "🌧️"],
+  67: ["Freezing rain", "🌧️"],
   71: ["Light snow", "❄️"],
   73: ["Snow", "❄️"],
   75: ["Heavy snow", "❄️"],
@@ -23,8 +27,11 @@ const weatherDescriptions = {
   80: ["Light showers", "🌦️"],
   81: ["Showers", "🌦️"],
   82: ["Heavy showers", "🌧️"],
+  85: ["Light snow showers", "🌨️"],
+  86: ["Snow showers", "🌨️"],
   95: ["Thunderstorm", "⛈️"],
   96: ["Thunderstorm with hail", "⛈️"],
+  99: ["Thunderstorm with heavy hail", "⛈️"],
 };
 
 // Built-in list of well-known cities, used for one-letter suggestions.
@@ -103,8 +110,10 @@ const recentSearches = document.getElementById("recentSearches");
 const suggestionBox = document.getElementById("suggestionBox");
 
 // Saved preferences and the last city (used when the unit changes).
+// lastLocation remembers a picked suggestion's coordinates, if there was one.
 let currentUnit = localStorage.getItem("weatherUnit") || "celsius";
 let lastCity = "";
+let lastLocation = null;
 
 // Shared state for the autocomplete dropdown.
 // currentSuggestions is what the dropdown is showing right now.
@@ -114,6 +123,7 @@ let suggestionTimer = null;
 const currentWeather = document.getElementById("currentWeather");
 const forecastSection = document.getElementById("forecastSection");
 const forecastCards = document.getElementById("forecastCards");
+const welcomeCard = document.getElementById("welcomeCard");
 
 // fetchForecast(latitude, longitude) - asks the weather API for one coordinate.
 async function fetchForecast(latitude, longitude) {
@@ -123,7 +133,8 @@ async function fetchForecast(latitude, longitude) {
 
   const weatherResponse = await fetch(
     `${WEATHER_URL}?latitude=${latitude}&longitude=${longitude}` +
-      "&current=temperature_2m,wind_speed_10m,weather_code" +
+      // is_day tells us if it is daytime there, used for the "night" look.
+      "&current=temperature_2m,wind_speed_10m,weather_code,is_day" +
       "&daily=weather_code,temperature_2m_max,temperature_2m_min" +
       `&timezone=auto&forecast_days=5${unitParameter}`
   );
@@ -142,9 +153,8 @@ async function fetchForecast(latitude, longitude) {
   return weatherData;
 }
 
-// getWeather(cityName, location) - gets the weather for one city.
-// location is optional: when it comes from a suggestion we already have its
-// coordinates, so the extra geocoding step can be skipped.
+// getWeather(cityName, location) - gets the weather for one city. A suggestion
+// arrives with coordinates, so the extra geocoding step is skipped for it.
 async function getWeather(cityName, location) {
   if (location) {
     const weatherData = await fetchForecast(
@@ -193,15 +203,20 @@ function showWeather(weather) {
   ];
   const degreeLabel = currentUnit === "celsius" ? "°C" : "°F";
 
+  // The page background follows this city's weather (see style.css).
+  document.body.dataset.weather = getWeatherType(
+    current.weather_code,
+    current.is_day
+  );
+  // The welcome card has done its job once a search succeeds.
+  welcomeCard.hidden = true;
+
   currentWeather.innerHTML = `
+    <p class="current-emoji">${emoji}</p>
     <div>
       <p class="current-temperature">${Math.round(current.temperature_2m)}${degreeLabel}</p>
       <p class="current-place">${name}, ${country}</p>
-    </div>
-    <div class="current-details">
-      <p class="current-description">
-        <span class="current-emoji">${emoji}</span>${description}
-      </p>
+      <p class="current-description">${description}</p>
       <p class="current-wind">Wind: ${Math.round(current.wind_speed_10m)} km/h</p>
     </div>
   `;
@@ -243,7 +258,10 @@ function showError(message) {
 // setTheme(theme) - applies a theme to the page and remembers it.
 function setTheme(theme) {
   document.documentElement.dataset.theme = theme;
-  themeButton.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+
+  // The pill button shows a moon for dark mode and a sun for light mode.
+  themeButton.textContent = theme === "dark" ? "☀️ Light mode" : "🌙 Dark mode";
+
   localStorage.setItem("weatherTheme", theme);
 }
 
@@ -251,6 +269,33 @@ function setTheme(theme) {
 function toggleTheme() {
   const currentTheme = document.documentElement.dataset.theme;
   setTheme(currentTheme === "dark" ? "light" : "dark");
+}
+
+// getWeatherType(weatherCode, isDay) - names the weather family used by the
+// CSS background. A night code always wins over the weather itself.
+function getWeatherType(weatherCode, isDay) {
+  if (!isDay) {
+    return "night";
+  }
+  if (weatherCode === 0 || weatherCode === 1) {
+    return "sunny";
+  }
+  // 71-77 are snow, 85-86 are snow showers.
+  if ((weatherCode >= 71 && weatherCode <= 77) || weatherCode === 85 || weatherCode === 86) {
+    return "snow";
+  }
+  if (weatherCode >= 95) {
+    return "thunderstorm";
+  }
+  // 51-67 are drizzle and rain, 80-82 are rain showers.
+  if (
+    (weatherCode >= 51 && weatherCode <= 67) ||
+    (weatherCode >= 80 && weatherCode <= 82)
+  ) {
+    return "rainy";
+  }
+  // Everything else (overcast, fog, partly cloudy) is the cloudy family.
+  return "cloudy";
 }
 
 // searchCity(cityName, location) - checks the input, loads and displays one city.
@@ -268,6 +313,8 @@ async function searchCity(cityName, location) {
   try {
     const weather = await getWeather(cityName, location);
     lastCity = weather.name;
+    // Keep the coordinates so a °C/°F switch reloads the exact same place.
+    lastLocation = location || null;
     showWeather(weather);
     saveRecentCity(weather.name);
   } catch (error) {
@@ -333,14 +380,12 @@ async function changeUnit() {
 
   // Only reload if the visitor has already searched for a city.
   if (lastCity) {
-    await searchCity(lastCity);
+    await searchCity(lastCity, lastLocation);
   }
 }
 
-// getSuggestions(query) - makes the list of suggestions for what was typed.
-// One letter: filter the built-in popularCities list by first letter.
-// Two or more letters: ask the geocoding API for up to 6 real matches.
-// If the API fails we return an empty list so the page never breaks.
+// getSuggestions(query) - builds the suggestion list: one letter filters the
+// built-in popularCities array, two or more ask the API. Failures return [].
 async function getSuggestions(query) {
   // A single letter filters the offline list: only cities starting with it.
   if (query.length === 1) {
@@ -423,18 +468,19 @@ function hideSuggestions() {
   suggestionBox.hidden = true;
 }
 
-// Typing a letter starts a 300ms debounce timer. We throw away any older
-// timer (clearTimeout) before setting the new one, so only the pause after
-// the LAST key press sends a request. That keeps the API calls to one per
-// word instead of one per letter, which is faster and less wasteful.
+// A debounce: clear the old timer and set a 300ms one, so only the pause after
+// the LAST key press sends a request (one per word, not one per letter).
 cityInput.addEventListener("input", () => {
   const query = cityInput.value.trim();
 
   clearTimeout(suggestionTimer);
 
-  // An empty box always closes the dropdown.
+  // The old list may not match the new text, so it is closed straight away.
+  // Otherwise a slow suggestion could be clicked for the wrong city.
+  hideSuggestions();
+
+  // An empty box stays closed; there is nothing to wait for.
   if (query === "") {
-    hideSuggestions();
     return;
   }
 

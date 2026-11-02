@@ -5,22 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Weather Dashboard</title>
   <link rel="icon" href="data:,">
+  <!-- One Google Font for the whole page. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
+    rel="stylesheet"
+  >
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-weather="default">
 
   <!-- Masthead: the title and the two settings buttons live here. -->
   <header class="masthead">
     <div>
-      <h1>Weather Dashboard</h1>
+      <h1><span class="title-emoji">🌤️</span> Weather Dashboard</h1>
       <p class="tagline">Live weather and a five-day outlook for any city</p>
     </div>
 
     <div class="masthead-controls">
       <!-- Shows the current unit and switches between °C and °F. -->
       <button id="unitButton" class="control-button" type="button">°C</button>
-      <!-- Switches the whole page between light and dark mode. -->
-      <button id="themeButton" class="control-button" type="button">Dark mode</button>
+      <!-- Switches the whole page between light and dark mode.
+           The moon or sun icon is added by script.js. -->
+      <button id="themeButton" class="control-button" type="button"></button>
     </div>
   </header>
 
@@ -47,9 +55,19 @@
       <div id="recentSearches" class="recent-searches"></div>
     </section>
 
-    <!-- Loading and error messages are hidden until they are needed. -->
-    <p id="loadingMessage" class="status-message" hidden>Loading...</p>
+    <!-- Loading shows a CSS spinner (the text stays for screen readers)
+         and error messages are hidden until they are needed. -->
+    <p id="loadingMessage" class="status-message" hidden>
+      <span class="spinner"></span>
+      <span class="visually-hidden">Loading...</span>
+    </p>
     <p id="errorMessage" class="status-message error-message" hidden></p>
+
+    <!-- Friendly empty state, shown until the first search succeeds. -->
+    <section id="welcomeCard" class="current-weather welcome-card">
+      <p class="welcome-emoji">🌤️</p>
+      <p class="welcome-text">Search a city to see the weather</p>
+    </section>
 
     <!-- Current weather is filled in by script.js after a search. -->
     <section id="currentWeather" class="current-weather" hidden></section>

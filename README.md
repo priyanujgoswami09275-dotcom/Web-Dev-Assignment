@@ -7,8 +7,8 @@ build tools, and no API key are needed.
 ## Features
 
 - Search for a city with the Search button or by pressing Enter.
-- Current weather card: city, country, temperature, wind speed, and a
-  description with an emoji.
+- Current weather card: a large weather emoji, a very big temperature, the city
+  and country as a heading, then the description and wind speed.
 - Five-day forecast cards showing the day, an emoji, and the maximum and
   minimum temperature.
 - Loading message while data is being fetched, and friendly error messages for
@@ -23,6 +23,11 @@ build tools, and no API key are needed.
   Picking a suggestion skips the extra lookup and loads the weather straight
   from its coordinates. Suggestions wait 300ms after the last key press
   (a debounce) before calling the API.
+- Modern glass design: the page background is a soft gradient that changes with
+  the searched city's weather (sunny, cloudy, rainy, snow, thunderstorm, night,
+  or a deep-blue default). Cards are frosted glass with rounded corners. The
+  page uses the Poppins font, a CSS loading spinner, and a welcome card that
+  says "Search a city to see the weather" before the first search.
 
 ## APIs used
 
@@ -34,8 +39,8 @@ required.
 | Find a city's coordinates | `https://geocoding-api.open-meteo.com/v1/search?name=CITY&count=1` |
 | Fetch current and daily weather | `https://api.open-meteo.com/v1/forecast` |
 
-The forecast request asks for `temperature_2m`, `wind_speed_10m`, and
-`weather_code` for the current weather, and `weather_code`,
+The forecast request asks for `temperature_2m`, `wind_speed_10m`,
+`weather_code`, and `is_day` for the current weather, and `weather_code`,
 `temperature_2m_max`, and `temperature_2m_min` for the five daily entries. It
 uses `timezone=auto` and `forecast_days=5`.
 
@@ -57,20 +62,24 @@ The project has exactly three files.
   section, and an empty forecast grid.
 - `style.css` holds all the colours in CSS variables. The `data-theme`
   attribute on the `<html>` element switches between the light and dark values.
-  The forecast uses `repeat(auto-fit, minmax(170px, 1fr))`, so cards sit in a
-  row on a laptop and stack on a phone without media queries.
+  The `data-weather` attribute on `<body>` (set by `script.js`) picks one of
+  seven sky gradients, and each sky also defines the `--sky-ink` colour used by
+  the text that sits directly on the background. Cards use a semi-transparent
+  surface plus `backdrop-filter: blur(12px)` for the glass look.
+  The forecast uses `repeat(auto-fit, minmax(145px, 1fr))`, so five cards sit in
+  a row on a laptop and two per row on a phone without media queries.
 - `script.js` holds all the behaviour:
 
 1. When the form is submitted, `searchCity` checks the input and shows the
-   loading message.
+   loading spinner.
 2. `getWeather` calls the geocoding API to turn the city name into latitude and
    longitude, then calls the forecast API with those coordinates (the shared
    `fetchForecast` helper builds that second request). If it is given a
    suggestion that already has coordinates, it skips the geocoding step. It
    returns the city details and the weather data.
 3. `showWeather` reads the returned object, looks up the weather code in the
-   `weatherDescriptions` object, and builds the current card and the five
-   forecast cards with template strings.
+   `weatherDescriptions` object, sets `data-weather` from `getWeatherType`, and
+   builds the current card and the five forecast cards with template strings.
 4. `showError` displays a friendly message and hides old results.
 5. While you type, `getSuggestions` builds the suggestion list (the built-in
    `popularCities` list for one letter, the geocoding API with `count=6` for
@@ -79,6 +88,22 @@ The project has exactly three files.
    API is called.
 6. Theme, unit, and recent-city choices are saved in `localStorage`, so they are
    still there after a refresh.
+
+### Weather backgrounds
+
+`getWeatherType()` turns the API's weather code into one of these names, and
+`showWeather()` stores it as `data-weather` on `<body>` so CSS can pick the
+matching gradient.
+
+| `data-weather` | Weather codes | Sky |
+| --- | --- | --- |
+| `sunny` | 0, 1 (daytime) | warm yellow-blue |
+| `cloudy` | 2, 3, 45, 48 | grey-blue |
+| `rainy` | 51-65, 80-82 | dark blue |
+| `snow` | 71-77 | ice blue |
+| `thunderstorm` | 95, 96 | dark purple |
+| `night` | any code with `is_day` = 0 | deep blue |
+| `default` | before the first search | deep blue |
 
 ### Saved values
 
