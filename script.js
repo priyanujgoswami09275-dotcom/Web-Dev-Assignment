@@ -42,7 +42,20 @@ async function getWeather(cityName) {
   const geoResponse = await fetch(
     `${GEOCODING_URL}?name=${encodeURIComponent(cityName)}&count=1`
   );
+
+  // response.ok is false when the server answers with an error status.
+  if (!geoResponse.ok) {
+    throw new Error("The location service is not responding. Please try again.");
+  }
+
   const geoData = await geoResponse.json();
+
+  // An empty results list means the city name could not be found.
+  if (!geoData.results || geoData.results.length === 0) {
+    throw new Error(
+      `No city found for "${cityName}". Please check the spelling and try again.`
+    );
+  }
 
   const { latitude, longitude, name, country } = geoData.results[0];
 
@@ -53,6 +66,11 @@ async function getWeather(cityName) {
       "&daily=weather_code,temperature_2m_max,temperature_2m_min" +
       "&timezone=auto&forecast_days=5"
   );
+
+  if (!weatherResponse.ok) {
+    throw new Error("The weather service is not responding. Please try again.");
+  }
+
   const weatherData = await weatherResponse.json();
 
   return { name, country, weatherData };
@@ -108,15 +126,41 @@ function showWeather(weather) {
   forecastSection.hidden = false;
 }
 
-// searchCity(cityName) - the small controller: shows loading, loads and displays one city.
+// showError(message) - shows a friendly message and hides any old results.
+function showError(message) {
+  errorMessage.textContent = message;
+  errorMessage.hidden = false;
+  currentWeather.hidden = true;
+  forecastSection.hidden = true;
+}
+
+// searchCity(cityName) - the small controller: checks the input, loads and displays one city.
 async function searchCity(cityName) {
+  // An empty search gets a helpful message instead of a network request.
+  if (!cityName) {
+    showError("Please enter a city name.");
+    return;
+  }
+
   loadingMessage.hidden = false;
   errorMessage.hidden = true;
 
-  const weather = await getWeather(cityName);
-
-  loadingMessage.hidden = true;
-  showWeather(weather);
+  try {
+    const weather = await getWeather(cityName);
+    showWeather(weather);
+  } catch (error) {
+    // A failed fetch (for example, no internet) arrives as a TypeError.
+    if (error.name === "TypeError") {
+      showError(
+        "Could not connect. Please check your internet connection and try again."
+      );
+    } else {
+      showError(error.message);
+    }
+  } finally {
+    // The loading message always disappears, even after an error.
+    loadingMessage.hidden = true;
+  }
 }
 
 // Pressing the Search button or the Enter key submits the form.
