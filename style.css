@@ -43,7 +43,6 @@ body {
   color: var(--ink);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   line-height: 1.5;
-  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* The hidden attribute must beat the display rules further down. */
@@ -121,7 +120,7 @@ h1 {
 .control-button:focus-visible,
 input:focus-visible,
 button:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
 
@@ -252,6 +251,8 @@ button:focus-visible {
 .current-wind {
   margin: 0;
   color: var(--muted);
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ============================================================

@@ -219,6 +219,15 @@ function showRecentCities() {
 // updateUnitButton() - shows the unit that is currently active.
 function updateUnitButton() {
   unitButton.textContent = currentUnit === "celsius" ? "°C" : "°F";
+
+  // The visible text is short, so screen readers get the full action.
+  // The label starts with the visible unit, so the two names always match.
+  unitButton.setAttribute(
+    "aria-label",
+    currentUnit === "celsius"
+      ? "°C, switch to Fahrenheit"
+      : "°F, switch to Celsius"
+  );
 }
 
 // changeUnit() - switches °C/°F, saves the choice, and reloads the last city.
