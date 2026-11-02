@@ -79,6 +79,12 @@ async function getWeather(cityName) {
   );
 
   if (!weatherResponse.ok) {
+    // 503 means the service is overloaded: waiting usually fixes it.
+    if (weatherResponse.status === 503) {
+      throw new Error(
+        "The weather service is busy right now. Please try again in a minute."
+      );
+    }
     throw new Error("The weather service is not responding. Please try again.");
   }
 
