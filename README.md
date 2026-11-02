@@ -51,7 +51,7 @@ The project has exactly three files.
   forecast grid.
 - `style.css` holds all the colours in CSS variables. The `data-theme`
   attribute on the `<html>` element switches between the light and dark values.
-  The forecast uses `repeat(auto-fit, minmax(140px, 1fr))`, so cards sit in a
+  The forecast uses `repeat(auto-fit, minmax(170px, 1fr))`, so cards sit in a
   row on a laptop and stack on a phone without media queries.
 - `script.js` holds all the behaviour:
 
