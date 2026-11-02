@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Masthead: the title and the two settings buttons live here. -->
+  <header class="masthead">
+    <div>
+      <h1>Weather Dashboard</h1>
+      <p class="tagline">Live weather and a five-day outlook for any city</p>
+    </div>
+
+    <div class="masthead-controls">
+      <!-- Shows the current unit and switches between °C and °F. -->
+      <button id="unitButton" class="control-button" type="button">°C</button>
+      <!-- Switches the whole page between light and dark mode. -->
+      <button id="themeButton" class="control-button" type="button">Dark mode</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Search form: submitting it (button or Enter) starts a search. -->
+    <section class="search-section">
+      <form id="searchForm" class="search-form">
+        <label for="cityInput" class="visually-hidden">City name</label>
+        <input
+          id="cityInput"
+          type="text"
+          placeholder="Enter a city, e.g. London"
+          autocomplete="off"
+        >
+        <button id="searchButton" type="submit">Search</button>
+      </form>
+
+      <!-- Recent cities are added here as small clickable chips. -->
+      <div id="recentSearches" class="recent-searches"></div>
+    </section>
+
+    <!-- Loading and error messages are hidden until they are needed. -->
+    <p id="loadingMessage" class="status-message" hidden>Loading...</p>
+    <p id="errorMessage" class="status-message error-message" hidden></p>
+
+    <!-- Current weather is filled in by script.js after a search. -->
+    <section id="currentWeather" class="current-weather" hidden></section>
+
+    <!-- The five-day forecast cards are added inside this grid. -->
+    <section id="forecastSection" class="forecast-section" hidden>
+      <h2>Five-day forecast</h2>
+      <div id="forecastCards" class="forecast-grid"></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
