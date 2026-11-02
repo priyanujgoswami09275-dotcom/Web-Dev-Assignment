@@ -34,6 +34,7 @@ const loadingMessage = document.getElementById("loadingMessage");
 const errorMessage = document.getElementById("errorMessage");
 const themeButton = document.getElementById("themeButton");
 const unitButton = document.getElementById("unitButton");
+const recentSearches = document.getElementById("recentSearches");
 
 // Saved preferences and the last city (used when the unit changes).
 let currentUnit = localStorage.getItem("weatherUnit") || "celsius";
@@ -173,6 +174,7 @@ async function searchCity(cityName) {
     const weather = await getWeather(cityName);
     lastCity = weather.name;
     showWeather(weather);
+    saveRecentCity(weather.name);
   } catch (error) {
     // A failed fetch (for example, no internet) arrives as a TypeError.
     if (error.name === "TypeError") {
@@ -186,6 +188,32 @@ async function searchCity(cityName) {
     // The loading message always disappears, even after an error.
     loadingMessage.hidden = true;
   }
+}
+
+// saveRecentCity(city) - keeps the last five searched cities in localStorage.
+function saveRecentCity(city) {
+  const savedCities = JSON.parse(localStorage.getItem("recentCities")) || [];
+
+  // Remove a duplicate (ignoring case), then put the newest city first.
+  const otherCities = savedCities.filter(
+    (savedCity) => savedCity.toLowerCase() !== city.toLowerCase()
+  );
+  const updatedCities = [city, ...otherCities].slice(0, 5);
+
+  localStorage.setItem("recentCities", JSON.stringify(updatedCities));
+  showRecentCities();
+}
+
+// showRecentCities() - draws one clickable chip for each saved city.
+function showRecentCities() {
+  const savedCities = JSON.parse(localStorage.getItem("recentCities")) || [];
+
+  recentSearches.innerHTML = savedCities
+    .map(
+      (city) =>
+        `<button class="chip" type="button" data-city="${city}">${city}</button>`
+    )
+    .join("");
 }
 
 // updateUnitButton() - shows the unit that is currently active.
@@ -214,6 +242,16 @@ searchForm.addEventListener("submit", (event) => {
 // Use the saved theme, or light mode on a first visit.
 setTheme(localStorage.getItem("weatherTheme") || "light");
 updateUnitButton();
+showRecentCities();
 
 themeButton.addEventListener("click", toggleTheme);
 unitButton.addEventListener("click", changeUnit);
+
+// Clicking a recent chip fills the search box and searches for that city.
+recentSearches.addEventListener("click", (event) => {
+  const city = event.target.dataset.city;
+  if (city) {
+    cityInput.value = city;
+    searchCity(city);
+  }
+});
