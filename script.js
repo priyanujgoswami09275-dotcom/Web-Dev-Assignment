@@ -33,6 +33,8 @@ const cityInput = document.getElementById("cityInput");
 const loadingMessage = document.getElementById("loadingMessage");
 const errorMessage = document.getElementById("errorMessage");
 const currentWeather = document.getElementById("currentWeather");
+const forecastSection = document.getElementById("forecastSection");
+const forecastCards = document.getElementById("forecastCards");
 
 // getWeather(cityName) - finds the city's coordinates, then fetches its forecast.
 async function getWeather(cityName) {
@@ -59,7 +61,7 @@ async function getWeather(cityName) {
 // showWeather(weather) - builds the current weather card on the page.
 function showWeather(weather) {
   const { name, country, weatherData } = weather;
-  const { current } = weatherData;
+  const { current, daily } = weatherData;
 
   // Falls back to a safe pair if the API sends an unknown code.
   const [description, emoji] = weatherDescriptions[current.weather_code] || [
@@ -81,6 +83,29 @@ function showWeather(weather) {
   `;
 
   currentWeather.hidden = false;
+
+  // Build one small card for each of the five days.
+  forecastCards.innerHTML = daily.time
+    .map((day, index) => {
+      const dayName = new Date(day).toLocaleDateString(undefined, {
+        weekday: "short",
+      });
+      const [dayDescription, dayEmoji] =
+        weatherDescriptions[daily.weather_code[index]] || ["Unknown", "🌡️"];
+      const maxTemp = Math.round(daily.temperature_2m_max[index]);
+      const minTemp = Math.round(daily.temperature_2m_min[index]);
+
+      return `
+        <article class="forecast-card">
+          <p class="forecast-day">${dayName}</p>
+          <p class="forecast-emoji" title="${dayDescription}">${dayEmoji}</p>
+          <p class="forecast-temps">${maxTemp}° / <span class="forecast-min">${minTemp}°</span></p>
+        </article>
+      `;
+    })
+    .join("");
+
+  forecastSection.hidden = false;
 }
 
 // searchCity(cityName) - the small controller: shows loading, loads and displays one city.
