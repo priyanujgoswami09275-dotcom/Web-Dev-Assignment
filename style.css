@@ -67,6 +67,24 @@
 }
 
 /* ============================================================
+   Dark mode
+   Only these variable values change; every component keeps its CSS.
+   ============================================================ */
+
+html[data-theme="dark"] {
+  --paper: var(--midnight);
+  --card: #0d1450;
+  --border: rgba(255, 255, 255, 0.12);
+  --body-text: rgba(255, 255, 255, 0.6);
+  --stone: rgba(255, 255, 255, 0.6);
+  --text-strong: rgba(255, 255, 255, 0.95);
+  --text-soft: rgba(255, 255, 255, 0.6);
+  --text-faint: rgba(255, 255, 255, 0.4);
+  --ghost: rgba(255, 255, 255, 0.1);
+  --hover-wash: rgba(255, 255, 255, 0.16);
+}
+
+/* ============================================================
    Base page
    The page is flat warm paper; cards are plain white shapes.
    ============================================================ */
@@ -171,7 +189,7 @@ main,
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: var(--space-3);
+  gap: var(--space-1);
   margin: 0 0 var(--space-6);
   padding: 0;
   list-style: none;
@@ -184,7 +202,7 @@ main,
   width: 44px;
   height: 44px;
   border: 2px solid var(--border);
-  border-radius: 50%;
+  border-radius: var(--radius-pill);
   background-color: var(--card);
   font-size: 20px;
   line-height: 1;
@@ -256,7 +274,7 @@ main,
   border: none;
   border-radius: var(--radius-button);
   background-color: var(--blue);
-  color: #ffffff;
+  color: var(--on-dark);
   font: inherit;
   font-size: var(--text-small);
   font-weight: 500;
@@ -368,6 +386,7 @@ main,
    ============================================================ */
 
 .scenery-banner {
+  position: relative;
   overflow: hidden;
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
@@ -664,10 +683,6 @@ body[data-weather="default"] {
    The counter and buttons sit in white pills over the photo.
    ============================================================ */
 
-.scenery-banner {
-  position: relative;
-}
-
 .scenery-info {
   position: absolute;
   left: var(--space-4);
@@ -729,7 +744,7 @@ body[data-weather="default"] {
   height: 24px;
   border: 2px solid var(--text-faint);
   border-top-color: var(--blue);
-  border-radius: 50%;
+  border-radius: var(--radius-pill);
   animation: spin 0.8s linear infinite;
 }
 
@@ -755,4 +770,15 @@ input:focus-visible,
 button:focus-visible {
   outline: 2px solid var(--blue);
   outline-offset: 2px;
+}
+
+/* ============================================================
+   Reduced motion
+   Visitors who ask for less motion get static weather marks.
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .weather-mark {
+    animation: none;
+  }
 }
