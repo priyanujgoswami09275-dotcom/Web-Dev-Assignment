@@ -125,6 +125,7 @@ const forecastSection = document.getElementById("forecastSection");
 const forecastCards = document.getElementById("forecastCards");
 const welcomeCard = document.getElementById("welcomeCard");
 const recentSection = document.getElementById("recentSection");
+const quickPicks = document.querySelector(".quick-picks");
 const sceneryImage = document.getElementById("sceneryImage");
 const sceneryCount = document.getElementById("sceneryCount");
 const sceneryPrev = document.getElementById("sceneryPrev");
@@ -209,7 +210,7 @@ function showWeather(weather) {
   ];
   const degreeLabel = currentUnit === "celsius" ? "°C" : "°F";
 
-  // The page background follows this city's weather (see style.css).
+  // The current-weather card colour follows this city's weather (see style.css).
   document.body.dataset.weather = getWeatherType(
     current.weather_code,
     current.is_day
@@ -218,13 +219,16 @@ function showWeather(weather) {
   welcomeCard.hidden = true;
 
   currentWeather.innerHTML = `
-    <p class="current-emoji">${emoji}</p>
-    <div>
+    <h2 class="section-heading">Right now.</h2>
+    <article class="weather-card">
+      <p class="current-emoji" aria-hidden="true">${emoji}</p>
       <p class="current-temperature">${Math.round(current.temperature_2m)}${degreeLabel}</p>
-      <p class="current-place">${name}, ${country}</p>
-      <p class="current-description">${description}</p>
-      <p class="current-wind">Wind: ${Math.round(current.wind_speed_10m)} km/h</p>
-    </div>
+      <div class="current-details">
+        <h3 class="current-place">${name}, ${country}</h3>
+        <p class="current-description">${description}</p>
+        <p class="current-wind">Wind: ${Math.round(current.wind_speed_10m)} km/h</p>
+      </div>
+    </article>
   `;
 
   currentWeather.hidden = false;
@@ -265,8 +269,8 @@ function showError(message) {
 function setTheme(theme) {
   document.documentElement.dataset.theme = theme;
 
-  // The pill button shows a moon for dark mode and a sun for light mode.
-  themeButton.textContent = theme === "dark" ? "☀️ Light mode" : "🌙 Dark mode";
+  // The button names the theme it will switch to, in sentence case.
+  themeButton.textContent = theme === "dark" ? "Light mode" : "Dark mode";
 
   localStorage.setItem("weatherTheme", theme);
 }
@@ -278,7 +282,7 @@ function toggleTheme() {
 }
 
 // getWeatherType(weatherCode, isDay) - names the weather family used by the
-// CSS background. A night code always wins over the weather itself.
+// current-weather card colour. A night code always wins over the weather itself.
 function getWeatherType(weatherCode, isDay) {
   if (!isDay) {
     return "night";
@@ -550,6 +554,17 @@ recentSearches.addEventListener("click", (event) => {
     searchCity(city);
   }
 });
+
+// handleQuickPick(event) - runs a normal search for the clicked quick-pick card.
+function handleQuickPick(event) {
+  const city = event.target.dataset.city;
+  if (city) {
+    cityInput.value = city;
+    searchCity(city);
+  }
+}
+
+quickPicks.addEventListener("click", handleQuickPick);
 
 /* ============================================================
    Featured scenery banner

@@ -13,6 +13,7 @@
   --stone: #757575;
   --border: rgba(0, 0, 0, 0.08);
   --blue: #0075de;
+  --blue-hover: #0068c7;
   --sky-tint: #e6f3fe;
   --marigold: #ffb110;
   --coral: #f64932;
@@ -264,7 +265,7 @@ main,
 }
 
 #searchButton:hover {
-  background-color: var(--signal-blue);
+  background-color: var(--blue-hover);
 }
 
 /* ============================================================
@@ -278,7 +279,7 @@ main,
 
 .section-label {
   margin: 0 0 var(--space-3);
-  color: var(--stone);
+  color: var(--text-soft);
   font-size: var(--text-caption);
   font-weight: 500;
 }
@@ -400,4 +401,358 @@ main,
   color: var(--body-text);
   text-decoration: underline;
   text-underline-offset: 2px;
+}
+
+
+/* ============================================================
+   Weather marks
+   The seven circles cycle through four accent border colours
+   and spring softly into place when the page loads.
+   ============================================================ */
+
+.weather-mark {
+  border-color: var(--signal-blue);
+  animation: mark-spring 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.weather-mark:nth-child(4n + 2) {
+  border-color: var(--coral);
+}
+
+.weather-mark:nth-child(4n + 3) {
+  border-color: var(--marigold);
+}
+
+.weather-mark:nth-child(4n + 4) {
+  border-color: var(--sky-wash);
+}
+
+@keyframes mark-spring {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ============================================================
+   Recent city chips
+   Small white pills with quiet grey text, like a logo wall.
+   ============================================================ */
+
+.chip {
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background-color: var(--card);
+  color: var(--text-soft);
+  font: inherit;
+  font-size: var(--text-small);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.chip:hover {
+  background-color: var(--hover-wash);
+  color: var(--text-strong);
+}
+
+/* ============================================================
+   Autocomplete dropdown
+   A plain white card with the one soft shadow in the app.
+   ============================================================ */
+
+.search-box {
+  position: relative;
+}
+
+.suggestion-box {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  right: 0;
+  z-index: 10;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background-color: var(--card);
+  box-shadow: var(--shadow-dropdown);
+}
+
+.suggestion {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  border-radius: var(--radius-button);
+  background-color: transparent;
+  color: var(--text-strong);
+  font: inherit;
+  font-size: var(--text-small);
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.suggestion:hover {
+  background-color: var(--hover-wash);
+}
+
+/* The pin emoji keeps its own size so long names cannot squash it. */
+.suggestion-pin {
+  flex: none;
+}
+
+/* ============================================================
+   Quick-pick cards
+   Four quiet city shortcuts inside the welcome card.
+   ============================================================ */
+
+.quick-pick {
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background-color: var(--card);
+  color: var(--text-strong);
+  font: inherit;
+  font-size: var(--text-small);
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.quick-pick:hover {
+  background-color: var(--hover-wash);
+}
+
+/* ============================================================
+   Current weather card
+   The card colour is set by data-weather on <body>.
+   ============================================================ */
+
+.weather-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-4) var(--space-5);
+  padding: var(--space-6);
+  border-radius: var(--radius-card);
+  background-color: var(--weather-card-bg);
+  color: var(--weather-card-ink);
+}
+
+.current-emoji {
+  margin: 0;
+  font-size: 56px;
+  line-height: 1;
+}
+
+.current-temperature {
+  margin: 0;
+  font-size: var(--text-temperature);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.current-details {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.current-place {
+  margin: 0;
+  font-size: var(--text-card-title);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.current-description {
+  margin: var(--space-2) 0 0;
+  color: inherit;
+  font-size: var(--text-body);
+}
+
+.current-wind {
+  margin: var(--space-1) 0 0;
+  color: inherit;
+  font-size: var(--text-small);
+}
+
+/* The six weather colours: bright cards use black ink, dark cards white. */
+body[data-weather="sunny"] {
+  --weather-card-bg: var(--marigold);
+  --weather-card-ink: var(--on-color);
+}
+
+body[data-weather="cloudy"] {
+  --weather-card-bg: var(--sky-wash);
+  --weather-card-ink: var(--on-color);
+}
+
+body[data-weather="rainy"] {
+  --weather-card-bg: var(--signal-blue);
+  --weather-card-ink: var(--on-color);
+}
+
+body[data-weather="snow"] {
+  --weather-card-bg: var(--sky-tint);
+  --weather-card-ink: var(--on-color);
+}
+
+body[data-weather="thunderstorm"] {
+  --weather-card-bg: var(--midnight);
+  --weather-card-ink: var(--on-dark);
+}
+
+body[data-weather="night"],
+body[data-weather="default"] {
+  --weather-card-bg: var(--card);
+  --weather-card-ink: var(--text-strong);
+}
+
+/* ============================================================
+   Forecast cards
+   Five plain white cards with a day, an emoji, and the temperatures.
+   ============================================================ */
+
+.forecast-card {
+  padding: var(--space-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background-color: var(--card);
+}
+
+.forecast-day {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: var(--text-small);
+  font-weight: 500;
+}
+
+.forecast-emoji {
+  margin: var(--space-3) 0;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.forecast-temps {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: var(--text-body);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.forecast-min {
+  color: var(--text-faint);
+  font-weight: 400;
+}
+
+/* ============================================================
+   Featured landscape controls
+   The counter and buttons sit in white pills over the photo.
+   ============================================================ */
+
+.scenery-banner {
+  position: relative;
+}
+
+.scenery-info {
+  position: absolute;
+  left: var(--space-4);
+  bottom: var(--space-4);
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background-color: var(--card);
+  color: var(--text-strong);
+}
+
+.scenery-count {
+  margin: 0;
+  font-size: var(--text-caption);
+}
+
+.scenery-controls {
+  position: absolute;
+  right: var(--space-4);
+  bottom: var(--space-4);
+  display: flex;
+  gap: var(--space-2);
+}
+
+.scenery-button {
+  min-width: 32px;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background-color: var(--card);
+  color: var(--text-strong);
+  font: inherit;
+  font-size: var(--text-small);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.scenery-button:hover {
+  background-color: var(--hover-wash);
+}
+
+/* ============================================================
+   Loading and error states
+   The spinner is blue, and errors are quiet cards with a coral edge.
+   ============================================================ */
+
+.status-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  color: var(--text-strong);
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--text-faint);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error-message {
+  justify-content: flex-start;
+  border: 1px solid var(--coral);
+  border-radius: var(--radius-card);
+  background-color: var(--card);
+}
+
+/* ============================================================
+   Keyboard focus
+   Every input and button gets the same blue ring with an offset.
+   ============================================================ */
+
+input:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
 }
