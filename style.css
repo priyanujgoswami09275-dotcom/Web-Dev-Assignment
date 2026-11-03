@@ -675,7 +675,9 @@ main,
   font-size: var(--text-small);
 }
 
-/* The six weather colours: bright cards use black ink, dark cards white. */
+/* The six weather colours. Every background/text pair must stay above
+   4.5:1: bright cards use black ink, and the rainy blue uses black
+   because white on it measures only 4.03:1. */
 body[data-weather="sunny"] {
   --weather-card-bg: var(--marigold);
   --weather-card-ink: var(--on-color);
