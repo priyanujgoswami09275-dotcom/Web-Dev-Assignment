@@ -538,6 +538,9 @@ document.addEventListener("click", (event) => {
 // Pressing the Search button or the Enter key submits the form.
 searchForm.addEventListener("submit", (event) => {
   event.preventDefault();
+  // Cancel any pending suggestion request so the dropdown cannot pop open
+  // over the results after the search has already started.
+  clearTimeout(suggestionTimer);
   hideSuggestions();
   searchCity(cityInput.value.trim());
 });
