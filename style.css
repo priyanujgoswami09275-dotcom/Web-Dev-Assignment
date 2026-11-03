@@ -47,6 +47,9 @@
   --radius-button: 8px;
   --radius-pill: 9999px;
 
+  /* The shared height of the search input and Search button. */
+  --control-height: 56px;
+
   /* Spacing is built on a 4px base. */
   --space-1: 4px;
   --space-2: 8px;
@@ -59,14 +62,17 @@
   --hero-padding: 48px;
   --section-gap: clamp(var(--space-6), 8vw, var(--space-8));
 
-  /* Type scale: caption, small, body, card title, page title, temperature. */
+  /* Type scale: caption, small, chip, body, input, subtitle, card title,
+     page title, temperature. */
   --text-caption: 12px;
   --text-small: 14px;
+  --text-chip: 15px;
   --text-body: 16px;
-  --text-subtitle: 18px;
-  --text-card-title: 22px;
-  --text-page-title: clamp(36px, 7vw, 54px);
-  --text-temperature: 72px;
+  --text-input: 18px;
+  --text-subtitle: 20px;
+  --text-card-title: 32px;
+  --text-page-title: clamp(40px, 8vw, 72px);
+  --text-temperature: 96px;
 
   /* The autocomplete dropdown is the only thing allowed a shadow. */
   --shadow-dropdown: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -264,13 +270,14 @@ main,
 #cityInput {
   flex: 1;
   min-width: 0;
-  padding: var(--space-3) var(--space-4);
+  height: var(--control-height);
+  padding: 0 var(--space-5);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   background-color: var(--card);
   color: var(--text-strong);
   font: inherit;
-  font-size: var(--text-body);
+  font-size: var(--text-input);
 }
 
 #cityInput::placeholder {
@@ -279,13 +286,14 @@ main,
 
 #searchButton {
   flex: none;
-  padding: 6px 15px;
+  min-height: var(--control-height);
+  padding: 12px 28px;
   border: none;
   border-radius: var(--radius-button);
   background-color: var(--blue);
   color: var(--on-dark);
   font: inherit;
-  font-size: var(--text-small);
+  font-size: var(--text-body);
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -329,7 +337,7 @@ main,
   color: var(--text-strong);
   font-size: var(--text-card-title);
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   line-height: 1.2;
 }
 
@@ -490,13 +498,13 @@ main,
    ============================================================ */
 
 .chip {
-  padding: var(--space-1) var(--space-3);
+  padding: var(--space-2) var(--space-4);
   border: 1px solid var(--border);
   border-radius: var(--radius-pill);
   background-color: var(--card);
   color: var(--text-soft);
   font: inherit;
-  font-size: var(--text-small);
+  font-size: var(--text-chip);
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
@@ -718,7 +726,7 @@ body[data-weather="default"] {
 .forecast-day {
   margin: 0;
   color: var(--text-soft);
-  font-size: var(--text-small);
+  font-size: var(--text-body);
   font-weight: 500;
 }
 
