@@ -124,6 +124,7 @@ const currentWeather = document.getElementById("currentWeather");
 const forecastSection = document.getElementById("forecastSection");
 const forecastCards = document.getElementById("forecastCards");
 const welcomeCard = document.getElementById("welcomeCard");
+const recentSection = document.getElementById("recentSection");
 const sceneryImage = document.getElementById("sceneryImage");
 const sceneryCount = document.getElementById("sceneryCount");
 const sceneryPrev = document.getElementById("sceneryPrev");
@@ -351,9 +352,12 @@ function saveRecentCity(city) {
   showRecentCities();
 }
 
-// showRecentCities() - draws one clickable chip for each saved city.
+// showRecentCities() - draws one clickable chip for each saved city,
+// and hides the whole row when there are no saved cities.
 function showRecentCities() {
   const savedCities = JSON.parse(localStorage.getItem("recentCities")) || [];
+
+  recentSection.hidden = savedCities.length === 0;
 
   recentSearches.innerHTML = savedCities
     .map(

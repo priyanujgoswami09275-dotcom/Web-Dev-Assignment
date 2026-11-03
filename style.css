@@ -1,194 +1,73 @@
 /* ============================================================
-   Theme colours.
-   Every colour lives in a variable so switching themes is one
-   attribute change on the <html> element.
+   Design tokens
+   Every colour, radius, space and type value is stored here once,
+   so one edit changes the whole page.
    ============================================================ */
 
 :root {
-  --ink: #17293a;           /* strong text used inside the cards */
-  --muted: #3a4d60;         /* secondary text (checked to 4.9:1 on every sky) */
-  --accent: #d99a00;        /* signal yellow for the search button */
-  --accent-ink: #1a1405;    /* text placed on the accent colour */
-  --error-text: #8f2f1e;
-  --error-border: #cf9a8c;
+  /* Core palette: warm paper, white cards, near-black ink. */
+  --paper: #f6f5f4;
+  --card: #ffffff;
+  --ink: #000000;
+  --body-text: #615d59;
+  --stone: #757575;
+  --border: rgba(0, 0, 0, 0.08);
+  --blue: #0075de;
+  --sky-tint: #e6f3fe;
+  --marigold: #ffb110;
+  --coral: #f64932;
+  --sky-wash: #62aef0;
+  --signal-blue: #097fe8;
+  --midnight: #02093a;
+  --peach: #f6d5b8;
 
-  /* The "glass" card surface: semi-transparent so the sky shows through. */
-  --glass: rgba(255, 255, 255, 0.72);
-  --glass-rule: rgba(255, 255, 255, 0.8);
-  --glass-strong: rgba(255, 255, 255, 0.88);
-  --pill: rgba(255, 255, 255, 0.55);
-  --input: rgba(255, 255, 255, 0.88);
-  --placeholder: #3a4d60;
-  /* The dropdown is an opaque panel so the page behind it cannot show through. */
-  --panel: #fbfdfe;
-}
+  /* Text hierarchy comes from alpha on ink, never from new grays. */
+  --text-strong: rgba(0, 0, 0, 0.95);
+  --text-soft: rgba(0, 0, 0, 0.6);
+  --text-faint: rgba(0, 0, 0, 0.4);
 
-[data-theme="dark"] {
-  --ink: #ece6d6;           /* chalk text */
-  --muted: #dde7ee;
-  --accent: #f0c24a;
-  --accent-ink: #0c1821;
-  --error-text: #ffb4a2;
-  --error-border: #7a4034;
+  /* Extra value-only tokens, so dark mode can swap them in one place. */
+  --ghost: transparent;
+  --hover-wash: var(--sky-tint);
+  --on-color: var(--ink);
+  --on-dark: #ffffff;
 
-  --glass: rgba(255, 255, 255, 0.08);
-  --glass-rule: rgba(255, 255, 255, 0.16);
-  --glass-strong: rgba(255, 255, 255, 0.14);
-  --pill: rgba(255, 255, 255, 0.12);
-  --input: rgba(255, 255, 255, 0.1);
-  --placeholder: #dde7ee;
-  --panel: #16232f;
-}
+  /* The current-weather card reads these two values. */
+  --weather-card-bg: var(--card);
+  --weather-card-ink: var(--text-strong);
 
-/* ============================================================
-   Sky gradients.
-   The data-weather attribute on <body> is set by script.js from
-   the city's weather code. Each rule below paints a soft gradient
-   and also sets --sky-ink, the text colour that stays readable on
-   that sky (used by the header, which sits directly on the sky).
-   ============================================================ */
+  /* Only three corner shapes exist in the whole app. */
+  --radius-card: 12px;
+  --radius-button: 8px;
+  --radius-pill: 9999px;
 
-body[data-weather="default"] {
-  --sky-top: #3b6ea5;
-  --sky-bottom: #1e3a5f;
-  --sky-ink: #eef4fb;
-}
+  /* Spacing is built on a 4px base. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 64px;
+  --space-8: 80px;
+  --section-gap: clamp(var(--space-6), 8vw, var(--space-8));
 
-body[data-weather="sunny"] {
-  --sky-top: #ffe29a;
-  --sky-bottom: #8fc4ec;
-  /* This sky also shows a real photo. The scrim is a see-through dark
-     layer that keeps the header text readable on top of the photo. */
-  --sky-photo: url("assets/scenery-hills.jpg");
-  --sky-scrim: linear-gradient(
-    180deg,
-    rgba(8, 20, 36, 0.62) 0%,
-    rgba(8, 20, 36, 0.34) 38%,
-    rgba(8, 20, 36, 0.18) 100%
-  );
-  --sky-ink: #f4f8fc;
-}
+  /* Type scale: caption, small, body, card title, page title, temperature. */
+  --text-caption: 12px;
+  --text-small: 14px;
+  --text-body: 16px;
+  --text-subtitle: 18px;
+  --text-card-title: 22px;
+  --text-page-title: clamp(36px, 7vw, 54px);
+  --text-temperature: 72px;
 
-body[data-weather="cloudy"] {
-  --sky-top: #b8c9da;
-  --sky-bottom: #8fa6bd;
-  --sky-photo: url("assets/scenery-hills.jpg");
-  --sky-scrim: linear-gradient(
-    180deg,
-    rgba(8, 20, 36, 0.62) 0%,
-    rgba(8, 20, 36, 0.34) 38%,
-    rgba(8, 20, 36, 0.18) 100%
-  );
-  --sky-ink: #f4f8fc;
-}
-
-body[data-weather="rainy"] {
-  --sky-top: #5d7189;
-  --sky-bottom: #3c4c5e;
-  --sky-ink: #eef3f8;
-}
-
-body[data-weather="snow"] {
-  --sky-top: #e4f2fb;
-  --sky-bottom: #b9dcf0;
-  --sky-photo: url("assets/scenery-mountains.jpg");
-  --sky-scrim: linear-gradient(
-    180deg,
-    rgba(8, 20, 36, 0.62) 0%,
-    rgba(8, 20, 36, 0.34) 38%,
-    rgba(8, 20, 36, 0.18) 100%
-  );
-  --sky-ink: #f4f8fc;
-}
-
-body[data-weather="thunderstorm"] {
-  --sky-top: #5b4a8a;
-  --sky-bottom: #38295c;
-  --sky-ink: #f0eefb;
-}
-
-body[data-weather="night"] {
-  --sky-top: #2f4470;
-  --sky-bottom: #1b2a52;
-  --sky-photo: url("assets/scenery-mountains.jpg");
-  --sky-scrim: linear-gradient(
-    180deg,
-    rgba(8, 20, 36, 0.62) 0%,
-    rgba(8, 20, 36, 0.34) 38%,
-    rgba(8, 20, 36, 0.18) 100%
-  );
-  --sky-ink: #f4f8fc;
-}
-
-/* The same skies again for dark mode: deeper and moodier. */
-html[data-theme="dark"] body[data-weather="default"] {
-  --sky-top: #26456b;
-  --sky-bottom: #10233f;
-  --sky-ink: #e6edf5;
-}
-
-html[data-theme="dark"] body[data-weather="sunny"] {
-  --sky-top: #2a5684;
-  --sky-bottom: #163454;
-  --sky-scrim: linear-gradient(
-    180deg,
-    rgba(4, 10, 20, 0.68) 0%,
-    rgba(4, 10, 20, 0.42) 38%,
-    rgba(4, 10, 20, 0.26) 100%
-  );
-  --sky-ink: #f4f8fc;
-}
-
-html[data-theme="dark"] body[data-weather="cloudy"] {
-  --sky-top: #2c3947;
-  --sky-bottom: #161f29;
-  --sky-scrim: linear-gradient(
-    180deg,
-    rgba(4, 10, 20, 0.68) 0%,
-    rgba(4, 10, 20, 0.42) 38%,
-    rgba(4, 10, 20, 0.26) 100%
-  );
-  --sky-ink: #f4f8fc;
-}
-
-html[data-theme="dark"] body[data-weather="rainy"] {
-  --sky-top: #1d2c40;
-  --sky-bottom: #0d1622;
-  --sky-ink: #dbe5ee;
-}
-
-html[data-theme="dark"] body[data-weather="snow"] {
-  --sky-top: #385364;
-  --sky-bottom: #22333f;
-  --sky-scrim: linear-gradient(
-    180deg,
-    rgba(4, 10, 20, 0.68) 0%,
-    rgba(4, 10, 20, 0.42) 38%,
-    rgba(4, 10, 20, 0.26) 100%
-  );
-  --sky-ink: #f4f8fc;
-}
-
-html[data-theme="dark"] body[data-weather="thunderstorm"] {
-  --sky-top: #31406b;
-  --sky-bottom: #1a1630;
-  --sky-ink: #e9e5fb;
-}
-
-html[data-theme="dark"] body[data-weather="night"] {
-  --sky-top: #24365e;
-  --sky-bottom: #101a38;
-  --sky-scrim: linear-gradient(
-    180deg,
-    rgba(4, 10, 20, 0.68) 0%,
-    rgba(4, 10, 20, 0.42) 38%,
-    rgba(4, 10, 20, 0.26) 100%
-  );
-  --sky-ink: #f4f8fc;
+  /* The autocomplete dropdown is the only thing allowed a shadow. */
+  --shadow-dropdown: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* ============================================================
-   Base page setup
+   Base page
+   The page is flat warm paper; cards are plain white shapes.
    ============================================================ */
 
 * {
@@ -202,30 +81,23 @@ html[data-theme="dark"] body[data-weather="night"] {
 
 body {
   margin: 0;
-  /* The background is two layers: a scrim on top of an optional photo.
-     Gradient skies leave --sky-photo as "none", so only the scrim shows
-     for them (the scrim is then just their normal gradient). */
-  --sky-scrim: linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
-  --sky-photo: none;
-  background-color: var(--sky-bottom);
-  background-image: var(--sky-scrim), var(--sky-photo);
-  background-size: auto, cover;
-  background-position: center, center top;
-  background-repeat: no-repeat;
-  color: var(--ink);
-  /* One font for the whole page, loaded in index.html. */
-  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  line-height: 1.5;
   min-height: 100vh;
+  background-color: var(--paper);
+  color: var(--text-strong);
+  /* Inter is loaded in index.html and used for the whole interface. */
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: var(--text-body);
+  line-height: 1.5;
 }
 
-/* Shared page width so the masthead and content line up. */
-.masthead,
-main {
-  max-width: 980px;
-  margin: 0 auto;
-  padding-left: 20px;
-  padding-right: 20px;
+/* One shared column keeps the top bar, content and footer aligned. */
+.top-bar,
+main,
+.photo-credit {
+  width: 100%;
+  max-width: 960px;
+  margin-inline: auto;
+  padding-inline: var(--space-5);
 }
 
 /* Hides a label visually but keeps it available to screen readers. */
@@ -239,415 +111,266 @@ main {
 }
 
 /* ============================================================
-   The glass look, shared by every card on the page
+   Top bar
+   The app name sits on the left and the two settings buttons
+   sit quietly on the right.
    ============================================================ */
 
-.current-weather,
-.status-message,
-.suggestion-box,
-.welcome-card,
-.forecast-card {
-  background-color: var(--glass);
-  /* blur(12px) frosts the sky behind the semi-transparent card. */
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-rule);
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(10, 22, 38, 0.28);
-}
-
-/* Cards rise gently when the pointer hovers over them. */
-.current-weather,
-.forecast-card,
-.welcome-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.current-weather:hover,
-.forecast-card:hover,
-.welcome-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 36px rgba(10, 22, 38, 0.36);
-}
-
-/* ============================================================
-   Masthead and controls
-   ============================================================ */
-
-.masthead {
+.top-bar {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  padding-top: 32px;
-  padding-bottom: 18px;
-  /* The header sits directly on the sky, so it uses the sky's own ink. */
-  color: var(--sky-ink);
+  gap: var(--space-4);
+  padding-block: var(--space-5);
 }
 
-h1 {
+.app-name {
   margin: 0;
-  font-size: clamp(1.5rem, 3vw, 2rem);
-  font-weight: 700;
-}
-
-.title-emoji {
-  margin-right: 4px;
-}
-
-.tagline {
-  margin: 4px 0 0;
-  /* No opacity dimming: the text must keep 4.5:1 on every sky. */
-  color: var(--sky-ink);
-  font-size: 0.95rem;
-}
-
-.masthead-controls {
-  display: flex;
-  gap: 10px;
-}
-
-/* Both settings buttons are round pills that frost whatever is behind. */
-.control-button {
-  padding: 10px 18px;
-  border: 1px solid var(--glass-rule);
-  border-radius: 999px;
-  background-color: var(--pill);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  color: var(--ink);
-  font: inherit;
-  font-size: 0.9rem;
+  font-size: var(--text-small);
   font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.top-bar-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* Ghost buttons are outlined, not filled, so they stay secondary. */
+.ghost-button {
+  padding: 6px 15px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-button);
+  background-color: var(--ghost);
+  color: var(--text-strong);
+  font: inherit;
+  font-size: var(--text-small);
+  font-weight: 500;
   cursor: pointer;
-  transition: transform 0.2s ease, background-color 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.control-button:hover {
-  background-color: var(--glass-strong);
-  transform: translateY(-2px);
-}
-
-.control-button:focus-visible,
-input:focus-visible,
-button:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 2px;
+.ghost-button:hover {
+  background-color: var(--hover-wash);
 }
 
 /* ============================================================
-   Search area and recent chips
+   Hero
+   Seven decorative weather marks sit above the big headline.
    ============================================================ */
+
+.hero {
+  margin-top: var(--space-7);
+  text-align: center;
+}
+
+.weather-marks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-6);
+  padding: 0;
+  list-style: none;
+}
+
+/* Each mark is a 44px white circle; the colours are added below. */
+.weather-mark {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  background-color: var(--card);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.page-title {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: var(--text-page-title);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.04;
+}
+
+/* The peach pill is an inline highlight around the word "Weather". */
+.title-pill {
+  display: inline-block;
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-pill);
+  background-color: var(--peach);
+  color: var(--ink);
+  line-height: 1;
+}
+
+.subtitle {
+  max-width: 520px;
+  margin: var(--space-5) auto 0;
+  color: var(--body-text);
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: var(--text-subtitle);
+  font-weight: 400;
+}
+
+/* ============================================================
+   Search row
+   The input and the blue Search button share one line.
+   ============================================================ */
+
+.search-section {
+  margin-top: var(--space-6);
+}
 
 .search-form {
   display: flex;
-  gap: 10px;
-  margin: 28px 0 14px;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0;
 }
 
 #cityInput {
   flex: 1;
   min-width: 0;
-  padding: 12px 16px;
-  border: 1px solid var(--glass-rule);
-  border-radius: 999px;
-  background-color: var(--input);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  color: var(--ink);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background-color: var(--card);
+  color: var(--text-strong);
   font: inherit;
+  font-size: var(--text-body);
 }
 
 #cityInput::placeholder {
-  color: var(--placeholder);
+  color: var(--stone);
 }
 
 #searchButton {
-  padding: 12px 26px;
+  flex: none;
+  padding: 6px 15px;
   border: none;
-  border-radius: 999px;
-  background-color: var(--accent);
-  color: var(--accent-ink);
+  border-radius: var(--radius-button);
+  background-color: var(--blue);
+  color: #ffffff;
   font: inherit;
-  font-weight: 600;
+  font-size: var(--text-small);
+  font-weight: 500;
   cursor: pointer;
-  transition: transform 0.2s ease, filter 0.2s ease;
+  transition: background-color 0.2s ease;
 }
 
 #searchButton:hover {
-  filter: brightness(0.95);
-  transform: translateY(-2px);
+  background-color: var(--signal-blue);
 }
 
-/* Small round buttons for the last five cities. */
+/* ============================================================
+   Recently searched row
+   A quiet caption sits above a row of small city pills.
+   ============================================================ */
+
+.recent-section {
+  margin-top: var(--space-6);
+}
+
+.section-label {
+  margin: 0 0 var(--space-3);
+  color: var(--stone);
+  font-size: var(--text-caption);
+  font-weight: 500;
+}
+
 .recent-searches {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  min-height: 30px;
-}
-
-.chip {
-  padding: 5px 14px;
-  border: 1px solid var(--glass-rule);
-  border-radius: 999px;
-  background-color: var(--pill);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  color: var(--ink);
-  font: inherit;
-  font-size: 0.85rem;
-  cursor: pointer;
-}
-
-.chip:hover {
-  background-color: var(--glass-strong);
+  gap: var(--space-2);
 }
 
 /* ============================================================
-   Autocomplete suggestions dropdown
+   Section headings and spacing
+   Big sections breathe with the same gap everywhere.
    ============================================================ */
 
-/* The wrapper box is the anchor the dropdown is positioned against. */
-.search-box {
-  position: relative;
+.section-heading {
+  margin: 0 0 var(--space-4);
+  color: var(--text-strong);
+  font-size: var(--text-card-title);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
 }
 
-.suggestion-box {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  right: 0;
-  z-index: 10;
-  max-height: 300px;
-  overflow-y: auto;
-  padding: 8px;
-  /* Nearly opaque so the cards behind the dropdown cannot ghost through. */
-  background-color: var(--panel);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+.welcome-card {
+  margin-top: var(--section-gap);
 }
 
-.suggestion {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 10px 14px;
-  border: none;
-  border-radius: 14px;
-  background-color: transparent;
-  color: var(--ink);
-  font: inherit;
-  font-size: 0.95rem;
-  text-align: left;
-  cursor: pointer;
+.current-weather {
+  margin-top: var(--section-gap);
 }
 
-.suggestion:hover {
-  background-color: rgba(217, 154, 0, 0.18);
+.forecast-section {
+  margin-top: var(--section-gap);
 }
 
-/* The pin emoji keeps its own size so long city names can't squash it. */
-.suggestion-pin {
-  flex: none;
+.banner-section {
+  margin-top: var(--section-gap);
 }
-
-/* ============================================================
-   Loading spinner and status messages
-   ============================================================ */
 
 .status-message {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin: 24px 0;
-  padding: 16px;
-  color: var(--ink);
-}
-
-/* The CSS spinner: a ring with one coloured edge, turned by an animation. */
-.spinner {
-  width: 26px;
-  height: 26px;
-  border: 3px solid rgba(128, 128, 128, 0.25);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.error-message {
-  border-color: var(--error-border);
-  color: var(--error-text);
-  background-color: var(--glass-strong);
+  margin: var(--space-5) 0 0;
 }
 
 /* ============================================================
-   Welcome card (empty state)
+   Welcome card
+   The empty state is a plain white card with a serif sentence.
    ============================================================ */
 
-/* .current-weather.welcome-card is more specific than .current-weather,
-   so the flex layout below wins over the grid further down. */
-.current-weather.welcome-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 28px;
-  padding: 48px 24px;
-  text-align: center;
-  color: var(--ink);
-}
-
-.welcome-emoji {
-  margin: 0;
-  font-size: 3.5rem;
-  line-height: 1;
+.welcome-card {
+  padding: var(--space-6);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background-color: var(--card);
 }
 
 .welcome-text {
   margin: 0;
-  font-size: 1.15rem;
-  font-weight: 600;
-}
-
-/* ============================================================
-   Current weather block
-   ============================================================ */
-
-.current-weather {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  margin-top: 28px;
-  padding: 30px 28px;
-  text-align: center;
-  color: var(--ink);
-}
-
-/* The one huge emoji that headlines the card. */
-.current-emoji {
-  margin: 0;
-  font-size: 5.5rem;
-  line-height: 1;
-}
-
-.current-temperature {
-  margin: 0;
-  font-size: clamp(3.5rem, 10vw, 6rem);
-  font-weight: 700;
-  line-height: 1;
-}
-
-/* City and country act as the card's heading. */
-.current-place {
-  margin: 8px 0 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-}
-
-/* Description and wind sit below the heading, as the brief asks. */
-.current-description {
-  margin: 12px 0 0;
-  font-size: 1.15rem;
-}
-
-.current-wind {
-  margin: 2px 0 0;
-  color: var(--muted);
-}
-
-/* ============================================================
-   Five-day forecast
-   ============================================================ */
-
-.forecast-section {
-  margin-top: 34px;
-}
-
-.forecast-section h2 {
-  margin: 0;
-  font-size: 0.85rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--sky-ink);
-}
-
-/* auto-fit + minmax keeps five cards in a row on a laptop and two per row
-   on a phone, without any media queries. */
-.forecast-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
-  gap: 14px;
-  margin-top: 16px;
-}
-
-.forecast-card {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 18px 16px;
-  color: var(--ink);
-}
-
-.forecast-day {
-  margin: 0;
-  color: var(--muted);
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.forecast-emoji {
-  margin: 0;
-  font-size: 1.8rem;
-  line-height: 1;
-}
-
-.forecast-temps {
-  margin: 0;
-  font-size: 0.95rem;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-/* The minimum temperature is secondary information. */
-.forecast-min {
-  color: var(--muted);
+  color: var(--text-strong);
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: var(--text-card-title);
   font-weight: 400;
 }
 
-/* The visitor's text selection follows the palette too. */
-::selection {
-  background-color: var(--accent);
-  color: var(--accent-ink);
+.quick-picks {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-5);
 }
 
 /* ============================================================
-   Featured scenery banner
+   Forecast grid
+   Five white cards share the row on a laptop and stack on a phone.
    ============================================================ */
 
-/* The banner is a rounded photo card that matches the other cards.
-   The caption and the three buttons sit on top of the photo inside
-   dark pills, so they stay readable on any photo in both themes. */
+.forecast-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+  gap: var(--space-3);
+}
+
+/* ============================================================
+   Featured landscape frame
+   The banner photo fills its card and never stretches the page.
+   ============================================================ */
+
 .scenery-banner {
-  position: relative;
-  margin-top: 28px;
-  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(10, 22, 38, 0.28);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background-color: var(--card);
 }
 
 .scenery-image {
@@ -657,85 +380,24 @@ button:focus-visible {
   object-fit: cover;
 }
 
-.scenery-info {
-  position: absolute;
-  left: 16px;
-  bottom: 14px;
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  padding: 6px 14px;
-  border-radius: 999px;
-  background-color: rgba(8, 20, 36, 0.55);
-  color: #f4f8fc;
-}
-
-.scenery-title {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.scenery-count {
-  margin: 0;
-  font-size: 0.85rem;
-}
-
-.scenery-controls {
-  position: absolute;
-  right: 16px;
-  bottom: 14px;
-  display: flex;
-  gap: 8px;
-}
-
-.scenery-button {
-  padding: 6px 14px;
-  border: none;
-  border-radius: 999px;
-  background-color: rgba(8, 20, 36, 0.55);
-  color: #f4f8fc;
-  font: inherit;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.2s ease;
-}
-
-.scenery-button:hover {
-  background-color: rgba(8, 20, 36, 0.75);
-  transform: translateY(-2px);
-}
-
-/* The banner buttons sit on a photo, so their focus ring is light. */
-.scenery-button:focus-visible {
-  outline: 2px solid #f4f8fc;
-  outline-offset: 2px;
-}
-
 /* ============================================================
-   Photo credit footer
+   Footer credit
+   The Pexels credit stays small and quiet under the page.
    ============================================================ */
 
-/* The credit sits in a small dark pill so it stays readable on any
-   sky, photo or gradient, in both themes. */
 .photo-credit {
-  max-width: 980px;
-  margin: 28px auto 26px;
-  padding: 0 20px;
+  padding-block: var(--space-6) var(--space-7);
   text-align: center;
 }
 
 .photo-credit p {
-  display: inline-block;
   margin: 0;
-  padding: 6px 14px;
-  border-radius: 999px;
-  background-color: rgba(8, 20, 36, 0.55);
-  color: #f4f8fc;
-  font-size: 0.8rem;
+  color: var(--body-text);
+  font-size: var(--text-caption);
 }
 
 .photo-credit a {
-  color: inherit;
+  color: var(--body-text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
