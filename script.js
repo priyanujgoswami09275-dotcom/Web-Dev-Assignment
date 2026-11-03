@@ -257,12 +257,14 @@ function showWeather(weather) {
   forecastSection.hidden = false;
 }
 
-// showError(message) - shows a friendly message and hides any old results.
+// showError(message) - shows a friendly message, hides old results, and
+// brings back the empty state so the visitor can try another city.
 function showError(message) {
   errorMessage.textContent = message;
   errorMessage.hidden = false;
   currentWeather.hidden = true;
   forecastSection.hidden = true;
+  welcomeCard.hidden = false;
 }
 
 // setTheme(theme) - applies a theme to the page and remembers it.
@@ -317,6 +319,8 @@ async function searchCity(cityName, location) {
     return;
   }
 
+  // The empty state is only for a failed load, so hide it while we fetch.
+  welcomeCard.hidden = true;
   loadingMessage.hidden = false;
   errorMessage.hidden = true;
 
@@ -542,6 +546,16 @@ searchForm.addEventListener("submit", (event) => {
 setTheme(localStorage.getItem("weatherTheme") || "light");
 updateUnitButton();
 showRecentCities();
+
+// loadStartupCity() - opens the last searched city on startup, and falls
+// back to Mumbai when this is the first visit.
+function loadStartupCity() {
+  const savedCities = JSON.parse(localStorage.getItem("recentCities")) || [];
+  const city = savedCities.length > 0 ? savedCities[0] : "Mumbai";
+  searchCity(city);
+}
+
+loadStartupCity();
 
 themeButton.addEventListener("click", toggleTheme);
 unitButton.addEventListener("click", changeUnit);
