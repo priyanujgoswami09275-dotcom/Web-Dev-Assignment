@@ -442,11 +442,11 @@ main,
 
 /* ============================================================
    Footer credit
-   The Pexels credit stays small and quiet under the page.
+   The Open-Meteo and Pexels credit stays small and centred.
    ============================================================ */
 
 .photo-credit {
-  padding-block: var(--space-6) var(--space-7);
+  padding: var(--space-6);
   text-align: center;
 }
 
