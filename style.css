@@ -436,7 +436,7 @@ main,
 .scenery-image {
   display: block;
   width: 100%;
-  height: clamp(180px, 28vw, 280px);
+  height: clamp(220px, 32vw, 340px);
   object-fit: cover;
 }
 
