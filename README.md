@@ -6,11 +6,15 @@ build tools, and no API key are needed.
 
 ## Features
 
+- On page load the app opens by itself: the most recently searched city is
+  loaded again, or Mumbai on a first visit (see "Startup auto-load" below).
 - Search for a city with the Search button or by pressing Enter.
+- A weather dashboard: the current weather card sits beside the five-day
+  forecast, side by side on a laptop and stacked on a phone.
 - Current weather card: a large weather emoji, a very big temperature, the city
   and country as a heading, then the description and wind speed.
-- Five-day forecast cards showing the day, an emoji, and the maximum and
-  minimum temperature.
+- Five-day forecast as a vertical list of five rows (day, emoji, max/min)
+  inside one white card.
 - Loading message while data is being fetched, and friendly error messages for
   an empty search, an unknown city, or no internet connection.
 - Light / dark mode that is remembered with `localStorage`.
@@ -21,7 +25,8 @@ build tools, and no API key are needed.
   ask the geocoding API for up to 6 matches, shown as "Name, State, Country".
   Picking a suggestion skips the extra lookup and loads the weather straight
   from its coordinates. Suggestions wait 300ms after the last key press
-  (a debounce) before calling the API.
+  (a debounce) before calling the API, and submitting a search cancels any
+  pending suggestion request.
 - Flat paper-notebook design: a warm off-white page, plain white cards separated
   by hairline borders, and black ink. Colour is used sparingly as punctuation.
   Inter carries the interface and Source Serif 4 is used only for the subtitle
@@ -31,13 +36,14 @@ build tools, and no API key are needed.
   paints it marigold (sunny), sky-wash (cloudy), signal-blue (rainy), sky-tint
   (snow), midnight (thunderstorm), or white/card (night and default). Every
   colour pair is checked to at least 4.5:1.
-- Four quick-pick city cards in the empty state (Mumbai, Manali, Tokyo, London)
-  that run a normal search when clicked.
+- Four quick-pick city cards (Mumbai, Manali, Tokyo, London) that run a normal
+  search when clicked. Each carries its own accent colour, and they appear only
+  when no weather is loaded — that is, only after a failed load.
 - The last five searched cities appear as quiet pill chips under the search box;
   the whole "Recently searched." row hides when there are none.
-- Featured scenery banner: a framed photo card below the forecast that changes
-  between the two scenic photos every 8 seconds. The arrows change the photo
-  by hand, the Pause button stops the automatic changes, and the counter
+- Featured scenery banner: a framed photo card below the weather dashboard that
+  changes between the two scenic photos every 8 seconds. The arrows change the
+  photo by hand, the Pause button stops the automatic changes, and the counter
   shows which photo is showing ("1 of 2").
 
 ## APIs used
@@ -69,44 +75,68 @@ An internet connection is needed because the weather data is fetched live.
 The project has exactly three files.
 
 - `index.html` holds the page structure: the top bar, the hero with seven
-  decorative weather marks, the search form with its suggestion dropdown, the
-  recently searched row, the loading and error messages, the welcome card with
-  four quick picks, an empty current-weather section, an empty forecast grid,
-  the featured landscape banner, and a small photo credit footer.
+  decorative weather marks and a centred 640px search column, the recently
+  searched row, the loading and error messages, the welcome card with four
+  accent-coloured quick picks, the weather dashboard (the current-weather
+  section and the forecast panel side by side in one grid), the featured
+  landscape banner, and a small Open-Meteo / Pexels credit footer.
 - `style.css` holds every design decision as a CSS variable in `:root`. The
   `data-theme` attribute on `<html>` swaps only those variable values for dark
   mode. The `data-weather` attribute on `<body>` (set by `script.js`) chooses
   the current card's background and text colours. There are no gradients, no
   backdrop blur, and exactly one shadow (on the autocomplete dropdown).
-  The forecast uses `repeat(auto-fit, minmax(145px, 1fr))`, so five cards sit in
-  a row on a laptop and two per row on a phone without media queries.
+  The dashboard grid uses `repeat(auto-fit, minmax(340px, 1fr))`, so the two
+  cards sit side by side on a laptop and stack on a phone without media
+  queries; the forecast panel lists the five days as one column of rows.
 - `script.js` holds all the behaviour:
 
-1. When the form is submitted, `searchCity` checks the input and shows the
-   loading spinner.
-2. `getWeather` calls the geocoding API to turn the city name into latitude and
+1. When the page opens, `loadStartupCity` reads the saved city list and calls
+   the normal `searchCity` with the most recent name (or Mumbai on a first
+   visit), so the dashboard is already filled in before you type anything.
+2. When the form is submitted, `searchCity` checks the input, hides the empty
+   state, and shows the loading spinner.
+3. `getWeather` calls the geocoding API to turn the city name into latitude and
    longitude, then calls the forecast API with those coordinates (the shared
    `fetchForecast` helper builds that second request). If it is given a
    suggestion that already has coordinates, it skips the geocoding step. It
    returns the city details and the weather data.
-3. `showWeather` reads the returned object, looks up the weather code in the
+4. `showWeather` reads the returned object, looks up the weather code in the
    `weatherDescriptions` object, sets `data-weather` from `getWeatherType`, and
-   builds the current card and the five forecast cards with template strings.
-4. `showError` displays a friendly message and hides old results.
-5. While you type, `getSuggestions` builds the suggestion list (the built-in
+   builds the current card and the five forecast rows with template strings.
+5. `showError` displays a friendly message, hides old results, and shows the
+   empty-state card again — that card is only ever seen after a failed load.
+6. While you type, `getSuggestions` builds the suggestion list (the built-in
    `popularCities` list for one letter, the geocoding API with `count=6` for
    two or more), `showSuggestions` paints the dropdown, and `hideSuggestions`
    closes it. A 300ms debounce timer waits until you stop typing before the
-   API is called.
-6. Theme, unit, and recent-city choices are saved in `localStorage`, so they are
+   API is called, and submitting the form cancels that timer.
+7. Theme, unit, and recent-city choices are saved in `localStorage`, so they are
    still there after a refresh. `showRecentCities` hides the whole
    "Recently searched." row when no city is saved.
-7. `handleQuickPick` runs the same `searchCity` function when one of the four
+8. `handleQuickPick` runs the same `searchCity` function when one of the four
    quick-pick cards is clicked, so the shortcut behaves like a normal search.
-8. The scenery banner uses `showScenery`, `startSceneryTimer`,
+9. The scenery banner uses `showScenery`, `startSceneryTimer`,
    `stopSceneryTimer`, and `toggleSceneryTimer`. A `setInterval` changes the
    photo every 8 seconds, the arrows call `showScenery` by hand, and the
    Pause button stops and restarts the timer.
+
+### Startup auto-load
+
+On every page load, `loadStartupCity()` decides which city to open:
+
+1. It reads the `recentCities` list from `localStorage` (the same list the
+   chips use).
+2. If the list has at least one name, it calls `searchCity(savedCities[0])` —
+   the newest saved city, because new searches are added at the front.
+3. If the list is empty (a first visit), it calls `searchCity("Mumbai")`.
+
+Both paths call the ordinary `searchCity` function, so the startup load uses
+exactly the same fetch, display, error, and saving code as a typed search —
+there is no second copy of the network logic. `searchCity` hides the
+empty-state card as soon as a load begins, so the welcome card with its quick
+picks appears only when a load fails (no internet, unknown city, or an API
+problem). The freshly loaded city is also saved back to `recentCities`, so
+reloading the page keeps opening the same place.
 
 ### Design system
 
@@ -140,17 +170,21 @@ Every design decision lives in `:root` in `style.css`:
 
 The three radii are `--radius-card: 12px`, `--radius-button: 8px`, and
 `--radius-pill: 9999px`. Spacing runs from `--space-1: 4px` through
-`--space-8: 80px`, with `--section-gap` giving 80px between big sections on a
-laptop and 32px on a phone. The type scale is `--text-caption: 12px`,
-`--text-small: 14px`, `--text-body: 16px`, `--text-card-title: 22px/700`,
-`--text-page-title: clamp(36px, 7vw, 54px)/700`, and
-`--text-temperature: 72px/600`. Inter is used for everything except the
+`--space-8: 80px`, with `--hero-padding: 48px` above the hero,
+`--card-padding: 28px` inside the white cards, and `--section-gap`
+(`clamp(40px, 6vw, 56px)`) giving 56px between big sections on a laptop and
+40px on a phone. The type scale is `--text-caption: 12px`,
+`--text-small: 14px`, `--text-chip: 15px`, `--text-body: 16px`,
+`--text-input: 18px`, `--text-subtitle: 20px`,
+`--text-card-title: 32px/700`, `--text-page-title: clamp(40px, 8vw, 72px)/700`,
+and `--text-temperature: 96px/600`. Inter is used for everything except the
 subtitle and the welcome sentence, which use Source Serif 4.
 
 A few value-only helper tokens make the swaps possible without new component
 CSS: `--ghost`, `--hover-wash`, `--on-color`, `--on-dark`, `--blue-hover`,
-`--weather-card-bg`, and `--weather-card-ink`. They are all defined in the same
-`:root` block and only ever change value.
+`--coral-soft`, `--sky-wash-soft`, `--weather-card-bg`, and
+`--weather-card-ink`. They are all defined in the same `:root` block and only
+ever change value.
 
 ### Weather card colours
 
@@ -171,6 +205,28 @@ CSS: `--ghost`, `--hover-wash`, `--on-color`, `--on-dark`, `--blue-hover`,
 
 White text on the rainy blue measures only 4.03:1, so the rainy card uses black
 text instead (5.21:1). The other five pairs measure 8.83:1 or higher.
+
+### Quick-pick accents
+
+The four quick-pick cards each get one accent: Mumbai uses `--marigold`, Manali
+uses `--sky-tint`, Tokyo uses `--coral-soft`, and London uses
+`--sky-wash-soft`. The two soft tints are coral at 15% and sky-wash at 40%,
+blended opaque over white, so their black text clears 4.5:1 in light mode and
+dark mode alike (a real alpha over the dark card would have made black text
+unreadable). Hovering a pick darkens it slightly with
+`filter: brightness(0.95)` — a colour change, not a movement.
+
+### Dashboard layout
+
+`.weather-dashboard` is a grid with
+`repeat(auto-fit, minmax(340px, 1fr))` and a 24px gap. The left column holds
+the "Right now." heading and the coloured current card (which stretches to
+match its neighbour's height); the right column holds the forecast panel, one
+white card whose five rows are separated by hairline borders. There are no
+media queries: below 728px of content width the grid simply has one column.
+The search column is capped at 640px and centred, the "Recently searched."
+label and chips are centred under it, and the featured landscape banner sits
+after the dashboard with a photo height of `clamp(220px, 32vw, 340px)`.
 
 ### Dark mode
 
