@@ -90,14 +90,18 @@
       </div>
     </section>
 
-    <!-- Current weather is filled in by script.js after a search. -->
-    <section id="currentWeather" class="current-weather" hidden></section>
+    <!-- Weather dashboard: the current card and the five-day forecast
+         share one grid, side by side on wide screens. -->
+    <div class="weather-dashboard">
+      <!-- Current weather is filled in by script.js after a search. -->
+      <section id="currentWeather" class="current-weather" hidden></section>
 
-    <!-- The five-day forecast cards are added inside this grid. -->
-    <section id="forecastSection" class="forecast-section" hidden>
-      <h2 class="section-heading">The next five days.</h2>
-      <div id="forecastCards" class="forecast-grid"></div>
-    </section>
+      <!-- The five-day rows are added inside this white panel. -->
+      <section id="forecastSection" class="forecast-section" hidden>
+        <h2 class="section-heading">The next five days.</h2>
+        <div id="forecastCards" class="forecast-grid"></div>
+      </section>
+    </div>
 
     <!-- Featured landscape: the two local photos cycle inside the banner. -->
     <section class="banner-section">
