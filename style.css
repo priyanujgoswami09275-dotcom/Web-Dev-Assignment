@@ -22,6 +22,11 @@
   --midnight: #02093a;
   --peach: #f6d5b8;
 
+  /* Soft tints for the quick picks: coral at 15% and sky-wash at 40%,
+     blended opaque over white so black text stays readable in dark mode. */
+  --coral-soft: #fee4e0;
+  --sky-wash-soft: #c0dff9;
+
   /* Text hierarchy comes from alpha on ink, never from new grays. */
   --text-strong: rgba(0, 0, 0, 0.95);
   --text-soft: rgba(0, 0, 0, 0.6);
@@ -553,25 +558,52 @@ main,
 
 /* ============================================================
    Quick-pick cards
-   Four quiet city shortcuts inside the welcome card.
+   Four accent-coloured city shortcuts inside the welcome card;
+   they are shown only when no weather is loaded.
    ============================================================ */
 
 .quick-pick {
-  padding: var(--space-4);
-  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  border: none;
   border-radius: var(--radius-card);
-  background-color: var(--card);
-  color: var(--text-strong);
+  background-color: var(--hover-wash);
+  color: var(--on-color);
   font: inherit;
-  font-size: var(--text-small);
+  font-size: var(--text-body);
   font-weight: 500;
   text-align: left;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: filter 0.2s ease;
+}
+
+/* One accent per city; the hover darkens the same colour slightly. */
+.quick-pick[data-city="Mumbai"] {
+  background-color: var(--marigold);
+}
+
+.quick-pick[data-city="Manali"] {
+  background-color: var(--sky-tint);
+}
+
+.quick-pick[data-city="Tokyo"] {
+  background-color: var(--coral-soft);
+}
+
+.quick-pick[data-city="London"] {
+  background-color: var(--sky-wash-soft);
 }
 
 .quick-pick:hover {
-  background-color: var(--hover-wash);
+  filter: brightness(0.95);
+}
+
+.quick-pick-emoji {
+  font-size: 28px;
+  line-height: 1;
 }
 
 /* ============================================================
