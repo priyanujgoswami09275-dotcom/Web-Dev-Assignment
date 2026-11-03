@@ -51,6 +51,7 @@
   --space-6: 32px;
   --space-7: 64px;
   --space-8: 80px;
+  --hero-padding: 48px;
   --section-gap: clamp(var(--space-6), 8vw, var(--space-8));
 
   /* Type scale: caption, small, body, card title, page title, temperature. */
@@ -181,7 +182,8 @@ main,
    ============================================================ */
 
 .hero {
-  margin-top: var(--space-7);
+  /* A short 48px run-in keeps the hero high on the page. */
+  padding-top: var(--hero-padding);
   text-align: center;
 }
 
@@ -238,11 +240,13 @@ main,
 
 /* ============================================================
    Search row
-   The input and the blue Search button share one line.
+   The input and the blue Search button share one line, held to
+   a 640px column that stays centred under the hero.
    ============================================================ */
 
 .search-section {
-  margin-top: var(--space-6);
+  max-width: 640px;
+  margin: var(--space-6) auto 0;
 }
 
 .search-form {
@@ -288,11 +292,12 @@ main,
 
 /* ============================================================
    Recently searched row
-   A quiet caption sits above a row of small city pills.
+   The caption and chips sit centred under the search column.
    ============================================================ */
 
 .recent-section {
   margin-top: var(--space-6);
+  text-align: center;
 }
 
 .section-label {
@@ -305,6 +310,7 @@ main,
 .recent-searches {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: var(--space-2);
 }
 
