@@ -60,7 +60,12 @@
   --space-7: 64px;
   --space-8: 80px;
   --hero-padding: 48px;
-  --section-gap: clamp(var(--space-6), 8vw, var(--space-8));
+
+  /* One padding value for the white cards. */
+  --card-padding: 28px;
+
+  /* Big sections sit 56px apart on a laptop and 40px on a phone. */
+  --section-gap: clamp(40px, 6vw, 56px);
 
   /* Type scale: caption, small, chip, body, input, subtitle, card title,
      page title, temperature. */
@@ -357,7 +362,7 @@ main,
 /* The forecast panel is the white card that holds the five rows. */
 .forecast-section {
   margin-top: 0;
-  padding: 28px;
+  padding: var(--card-padding);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   background-color: var(--card);
@@ -379,7 +384,7 @@ main,
 
 .welcome-card {
   margin-top: var(--section-gap);
-  padding: var(--space-6);
+  padding: var(--card-padding);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
   background-color: var(--card);
@@ -624,7 +629,7 @@ main,
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-4) var(--space-5);
-  padding: var(--space-6);
+  padding: var(--card-padding);
   border-radius: var(--radius-card);
   background-color: var(--weather-card-bg);
   color: var(--weather-card-ink);
