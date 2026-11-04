@@ -346,9 +346,21 @@ async function searchCity(cityName, location) {
   }
 }
 
+// readRecentCities() - reads the saved cities list and falls back to an
+// empty array when it is missing or corrupted (e.g. someone set "abc"),
+// so a broken value can never crash the page.
+function readRecentCities() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem("recentCities"));
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    return [];
+  }
+}
+
 // saveRecentCity(city) - keeps the last five searched cities in localStorage.
 function saveRecentCity(city) {
-  const savedCities = JSON.parse(localStorage.getItem("recentCities")) || [];
+  const savedCities = readRecentCities();
 
   // Remove a duplicate (ignoring case), then put the newest city first.
   const otherCities = savedCities.filter(
@@ -363,7 +375,7 @@ function saveRecentCity(city) {
 // showRecentCities() - draws one clickable chip for each saved city,
 // and hides the whole row when there are no saved cities.
 function showRecentCities() {
-  const savedCities = JSON.parse(localStorage.getItem("recentCities")) || [];
+  const savedCities = readRecentCities();
 
   recentSection.hidden = savedCities.length === 0;
 
@@ -553,7 +565,7 @@ showRecentCities();
 // loadStartupCity() - opens the last searched city on startup, and falls
 // back to Mumbai when this is the first visit.
 function loadStartupCity() {
-  const savedCities = JSON.parse(localStorage.getItem("recentCities")) || [];
+  const savedCities = readRecentCities();
   const city = savedCities.length > 0 ? savedCities[0] : "Mumbai";
   searchCity(city);
 }
