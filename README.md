@@ -74,12 +74,14 @@ An internet connection is needed because the weather data is fetched live.
 
 The project has exactly three files.
 
-- `index.html` holds the page structure: the top bar, the hero with seven
-  decorative weather marks and a centred 640px search column, the recently
-  searched row, the loading and error messages, the welcome card with four
-  accent-coloured quick picks, the weather dashboard (the current-weather
-  section and the forecast panel side by side in one grid), the featured
-  landscape banner, and a small Open-Meteo / Pexels credit footer.
+- `index.html` holds the page structure: one `.app-frame` wrapper around the top
+  bar, the hero with seven decorative weather marks and a centred 720px search
+  column, the recently searched row, the loading and error messages, the
+  welcome card with four accent-coloured quick picks, the weather dashboard
+  (the current-weather section and the forecast panel side by side in one
+  grid), the featured landscape banner, and a small Open-Meteo / Pexels credit
+  footer. The two dashboard columns each carry their heading above the card,
+  so the cards start at the same height.
 - `style.css` holds every design decision as a CSS variable in `:root`. The
   `data-theme` attribute on `<html>` swaps only those variable values for dark
   mode. The `data-weather` attribute on `<body>` (set by `script.js`) chooses
@@ -111,7 +113,10 @@ The project has exactly three files.
    closes it. A 300ms debounce timer waits until you stop typing before the
    API is called, and submitting the form cancels that timer.
 7. Theme, unit, and recent-city choices are saved in `localStorage`, so they are
-   still there after a refresh. `showRecentCities` hides the whole
+   still there after a refresh. `readRecentCities` wraps the `recentCities`
+   JSON parse in `try/catch` (and checks it is a real array), so a corrupted
+   value such as `"abc"` simply becomes an empty list — the startup load falls
+   back to Mumbai instead of crashing. `showRecentCities` hides the whole
    "Recently searched." row when no city is saved.
 8. `handleQuickPick` runs the same `searchCity` function when one of the four
    quick-pick cards is clicked, so the shortcut behaves like a normal search.
@@ -172,19 +177,20 @@ The three radii are `--radius-card: 12px`, `--radius-button: 8px`, and
 `--radius-pill: 9999px`. Spacing runs from `--space-1: 4px` through
 `--space-8: 80px`, with `--hero-padding: 48px` above the hero,
 `--card-padding: 28px` inside the white cards, and `--section-gap`
-(`clamp(40px, 6vw, 56px)`) giving 56px between big sections on a laptop and
-40px on a phone. The type scale is `--text-caption: 12px`,
-`--text-small: 14px`, `--text-chip: 15px`, `--text-body: 16px`,
-`--text-input: 18px`, `--text-subtitle: 20px`,
-`--text-card-title: 32px/700`, `--text-page-title: clamp(40px, 8vw, 72px)/700`,
-and `--text-temperature: 96px/600`. Inter is used for everything except the
-subtitle and the welcome sentence, which use Source Serif 4.
+(`clamp(48px, 6vw, 80px)`) giving 80px between big sections on a laptop and
+48px on a phone. The type scale is `--text-caption: 12px`,
+`--text-small: 14px`, `--text-chip: 16px`, `--text-body: 16px`,
+`--text-input: 18px`, `--text-description: 18px`, `--text-subtitle: 20px`,
+`--text-card-title: 32px/700`, `--text-page-title: clamp(40px, 7vw, 80px)/700`,
+and `--text-temperature: 120px/600`. The search input and button share
+`--control-height: 60px`. Inter is used for everything except the subtitle and
+the welcome sentence, which use Source Serif 4.
 
 A few value-only helper tokens make the swaps possible without new component
 CSS: `--ghost`, `--hover-wash`, `--on-color`, `--on-dark`, `--blue-hover`,
-`--coral-soft`, `--sky-wash-soft`, `--weather-card-bg`, and
-`--weather-card-ink`. They are all defined in the same `:root` block and only
-ever change value.
+`--coral-soft`, `--sky-wash-soft`, `--weather-card-bg`,
+`--weather-card-ink`, `--frame-border`, and `--frame-surface`. They are all
+defined in the same `:root` block and only ever change value.
 
 ### Weather card colours
 
@@ -216,17 +222,31 @@ dark mode alike (a real alpha over the dark card would have made black text
 unreadable). Hovering a pick darkens it slightly with
 `filter: brightness(0.95)` — a colour change, not a movement.
 
-### Dashboard layout
+### App frame and dashboard layout
+
+The whole page sits inside one `.app-frame` card:
+`width: min(1280px, calc(100% - 48px))`, `margin: 24px auto`, a 1px
+`var(--frame-border)` border, a 12px radius, `overflow: hidden`, and a
+`var(--frame-surface)` background that is a touch lighter than the page behind
+it (`#fbfaf9` on `#f6f5f4` in light mode, `#051045` on `#02093a` in dark mode).
+Inside the frame, the top bar has a 1px `var(--border)` line under it and the
+footer has the same line above it. The top bar, `main`, and footer fill the
+frame with `padding-inline: clamp(20px, 4vw, 56px)`. One media query handles
+phones: below 600px the frame margin drops to 8px.
 
 `.weather-dashboard` is a grid with
-`repeat(auto-fit, minmax(340px, 1fr))` and a 24px gap. The left column holds
-the "Right now." heading and the coloured current card (which stretches to
-match its neighbour's height); the right column holds the forecast panel, one
-white card whose five rows are separated by hairline borders. There are no
-media queries: below 728px of content width the grid simply has one column.
-The search column is capped at 640px and centred, the "Recently searched."
-label and chips are centred under it, and the featured landscape banner sits
-after the dashboard with a photo height of `clamp(220px, 32vw, 340px)`.
+`repeat(auto-fit, minmax(340px, 1fr))` and a 24px gap. Both columns put their
+heading ("Right now." / "The next five days.") above their card, so the orange
+card and the white forecast panel start at the same height. The left card is at
+least 380px tall with a 120px temperature, 32px place name, 18px description,
+and 16px wind line; its description and wind are pushed to the bottom with
+`margin-top: auto`. The right column is one white panel whose five rows use
+18px text, 36px emoji, and 20px of vertical padding, separated by hairline
+borders. The grid needs no media queries: below 728px of content width it
+simply becomes one column. The search column is capped at 720px and centred,
+the "Recently searched." label and chips are centred under it, and the featured
+landscape banner sits after the dashboard with a photo height of
+`clamp(260px, 34vw, 460px)`.
 
 ### Dark mode
 
@@ -235,7 +255,9 @@ after the dashboard with a photo height of `clamp(220px, 32vw, 340px)`.
 the page becomes `--midnight`, cards become `#0d1450`, the border becomes
 `rgba(255, 255, 255, 0.12)`, and the ink alphas flip to white at 0.95 / 0.6 /
 0.4. Ghost buttons use `rgba(255, 255, 255, 0.1)`, and the hover wash becomes
-`rgba(255, 255, 255, 0.16)`. The Search button stays `--blue`, and the
+`rgba(255, 255, 255, 0.16)`. The frame border flips to
+`rgba(255, 255, 255, 0.22)` and its surface becomes `#051045`. The Search
+button stays `--blue`, and the
 weather-coloured card keeps its accent colour. No component rule is rewritten
 for dark mode; only the variable values change. The choice is still remembered
 in `localStorage`.
