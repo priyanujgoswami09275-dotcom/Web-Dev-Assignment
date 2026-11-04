@@ -108,10 +108,13 @@
       <!-- Current weather is filled in by script.js after a search. -->
       <section id="currentWeather" class="current-weather" hidden></section>
 
-      <!-- The five-day rows are added inside this white panel. -->
+      <!-- The heading is stored here so it hides with the section,
+           and the five-day rows sit inside the white panel below it. -->
       <section id="forecastSection" class="forecast-section" hidden>
         <h2 class="section-heading">The next five days.</h2>
-        <div id="forecastCards" class="forecast-grid"></div>
+        <div class="forecast-panel">
+          <div id="forecastCards" class="forecast-grid"></div>
+        </div>
       </section>
     </div>
 

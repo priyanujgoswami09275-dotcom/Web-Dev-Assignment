@@ -359,9 +359,18 @@ main,
   flex-direction: column;
 }
 
-/* The forecast panel is the white card that holds the five rows. */
+/* The forecast column mirrors the current one: heading first, white panel
+   below it, so both cards start at the same height. */
 .forecast-section {
+  display: flex;
+  flex-direction: column;
   margin-top: 0;
+}
+
+/* The white panel holds the five rows and stretches to match the
+   current card's column. */
+.forecast-panel {
+  flex: 1;
   padding: var(--card-padding);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
