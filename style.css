@@ -12,6 +12,11 @@
   --body-text: #615d59;
   --stone: #757575;
   --border: rgba(0, 0, 0, 0.08);
+
+  /* The app frame: its border line and a surface a touch lighter
+     than the page so the frame's edge reads clearly. */
+  --frame-border: rgba(0, 0, 0, 0.18);
+  --frame-surface: #fbfaf9;
   --blue: #0075de;
   --blue-hover: #0068c7;
   --sky-tint: #e6f3fe;
@@ -92,6 +97,10 @@ html[data-theme="dark"] {
   --paper: var(--midnight);
   --card: #0d1450;
   --border: rgba(255, 255, 255, 0.12);
+
+  /* The frame swaps to a light line and a slightly lighter surface. */
+  --frame-border: rgba(255, 255, 255, 0.22);
+  --frame-surface: #051045;
   --body-text: rgba(255, 255, 255, 0.6);
   --stone: rgba(255, 255, 255, 0.6);
   --text-strong: rgba(255, 255, 255, 0.95);
@@ -136,6 +145,29 @@ main,
   padding-inline: var(--space-5);
 }
 
+/* ============================================================
+   App frame
+   One bordered card holds the top bar, the content and the
+   footer; the page background peeks out around it.
+   ============================================================ */
+
+.app-frame {
+  width: min(1280px, calc(100% - 48px));
+  margin: 24px auto;
+  border: 1px solid var(--frame-border);
+  border-radius: var(--radius-card);
+  background-color: var(--frame-surface);
+  overflow: hidden;
+}
+
+/* Phones pull the frame closer to the screen's edges. */
+@media (max-width: 600px) {
+  .app-frame {
+    width: calc(100% - 16px);
+    margin: 8px auto;
+  }
+}
+
 /* Hides a label visually but keeps it available to screen readers. */
 .visually-hidden {
   position: absolute;
@@ -159,6 +191,8 @@ main,
   justify-content: space-between;
   gap: var(--space-4);
   padding-block: var(--space-5);
+  /* A thin divider separates the bar from the content below it. */
+  border-bottom: 1px solid var(--border);
 }
 
 .app-name {
@@ -459,6 +493,8 @@ main,
 .photo-credit {
   padding: var(--space-6);
   text-align: center;
+  /* A thin divider separates the credit from the content above it. */
+  border-top: 1px solid var(--border);
 }
 
 .photo-credit p {
