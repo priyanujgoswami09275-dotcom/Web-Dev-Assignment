@@ -632,14 +632,15 @@ main,
 
 /* ============================================================
    Current weather card
-   The card colour is set by data-weather on <body>.
+   A vertical flex column: emoji, temperature, place, and the
+   description and wind pinned to the card's bottom edge.
    ============================================================ */
 
 .weather-card {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-4) var(--space-5);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
   padding: var(--card-padding);
   border-radius: var(--radius-card);
   background-color: var(--weather-card-bg);
@@ -661,8 +662,12 @@ main,
   font-variant-numeric: tabular-nums;
 }
 
+/* The details stretch to the card's full height so the bottom-anchored
+   lines really reach the bottom edge. */
 .current-details {
-  flex: 1 1 220px;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
   min-width: 0;
 }
 
@@ -674,8 +679,10 @@ main,
   line-height: 1.2;
 }
 
+/* margin-top: auto pushes the description and wind to the card's
+   bottom, leaving no dead space in the middle. */
 .current-description {
-  margin: var(--space-2) 0 0;
+  margin: auto 0 0;
   color: inherit;
   font-size: var(--text-body);
 }
