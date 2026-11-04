@@ -700,10 +700,11 @@ main,
   font-variant-numeric: tabular-nums;
 }
 
-/* The details stretch to the card's full height so the bottom-anchored
-   lines really reach the bottom edge. */
+/* The details grow to fill the rest of the card and stretch full width,
+   so the bottom-anchored lines really reach the bottom edge. */
 .current-details {
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-self: stretch;
   min-width: 0;
